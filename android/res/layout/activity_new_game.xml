@@ -9,7 +9,7 @@
     >
 
     <GridView
-        android:id="@+id/layout_seleccion_figuras"
+        android:id="@+id/layout_piece_selection"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="140dp"
@@ -20,50 +20,49 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_players"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layout_seleccion_figuras">
+        app:layout_constraintTop_toBottomOf="@+id/layout_piece_selection">
 
         <TextView
-            android:id="@+id/textViewNumeroJugadores"
+            android:id="@+id/textViewNumberPlayers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:layout_marginLeft="65dp"
             android:layout_marginStart="65dp"
-            android:text="@string/numero_jugadores"
+            android:text="@string/number_players_text"
             android:textColor="@color/black"
-            android:textSize="25sp"
+            android:textSize="20sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Spinner
-            android:id="@+id/spinnerNumeroJugadores"
+            android:id="@+id/spinnerNumberPlayers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="37dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            app:layout_constraintStart_toEndOf="@+id/textViewNumeroJugadores"
+            android:layout_marginTop="32dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
+            app:layout_constraintStart_toEndOf="@+id/textViewNumberPlayers"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/botonJugar"
+            android:id="@+id/playButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/boton_jugar"
-            android:layout_marginLeft="150dp"
-            android:layout_marginStart="150dp"
-            android:layout_marginRight="150dp"
-            android:layout_marginEnd="150dp"
+            android:text="@string/play_buton"
+            android:layout_marginLeft="125dp"
+            android:layout_marginRight="125dp"
             android:onClick="startGame"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinnerNumeroJugadores" />
+            app:layout_constraintTop_toBottomOf="@+id/spinnerNumberPlayers" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

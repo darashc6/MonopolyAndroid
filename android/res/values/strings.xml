@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MonopolyAndroid</string>
-    <string name="boton_nueva_partida">Nueva Partida</string>
-    <string name="boton_cargar_partida">Cargar Partida</string>
-    <string name="numero_jugadores">Nº Jugadores:</string>
-    <string name="boton_jugar">¡Jugar!</string>
-    <string-array name="numero_jugadores">
+    <string name="buton_new_game">Nueva Partida</string>
+    <string name="button_load_game">Cargar Partida</string>
+    <string name="number_players_text">Nº Jugadores:</string>
+    <string name="play_buton">¡Jugar!</string>
+    <string-array name="number_players">
         <item>2</item>
         <item>3</item>
         <item>4</item>
+    </string-array>
+    <string-array name="pieces">
+        <item>Barco</item>
+        <item>Caballo</item>
+        <item>Carretilla</item>
+        <item>Coche</item>
+        <item>Dedal</item>
+        <item>Gorra</item>
+        <item>Guerrero</item>
+        <item>Zapato</item>
     </string-array>
 </resources>
