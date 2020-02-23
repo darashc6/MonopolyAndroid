@@ -15,10 +15,12 @@ public class Player extends Actor {
     private int speed;
     private String name;
     private HashSet<Integer> moving;
+    private int boardPosition;
 
     public Player(String texture, float x, float y) {
         this.moving=new HashSet<>();
         this.speed=10;
+        this.boardPosition=1;
         colliding=false;
         sprite=new Sprite(new Texture(texture));
         sprite.setBounds(x, y, Gdx.graphics.getWidth()/12, Gdx.graphics.getHeight()/12);
@@ -41,4 +43,14 @@ public class Player extends Actor {
         sprite.setRotation(getRotation());
         sprite.draw(batch);
     }
+
+    public void setBoardPosition(int boardPosition) {
+        this.boardPosition = boardPosition;
+    }
+
+    public int getBoardPosition() {
+        return boardPosition;
+    }
+
+
 }

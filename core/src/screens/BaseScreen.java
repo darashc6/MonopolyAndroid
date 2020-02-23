@@ -8,9 +8,13 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.MoveByAction;
+import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.darash.monopoly.MyGame;
+
+import java.util.Random;
 
 import listeners.StageListener;
 import pieces.Player;
@@ -26,9 +30,9 @@ public abstract class BaseScreen implements Screen {
     protected BaseScreen(MyGame mg) {
         this.game = mg;
 
-        dice = new Player("pieces/zapato.png", Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight() / 2);
+        dice = new Player("pieces/zapato.png", Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         dice.setTouchable(Touchable.enabled);
-        testing=new Player("pieces/zapato.png", Gdx.graphics.getWidth()/1.32f, Gdx.graphics.getHeight() / 18);
+        testing = new Player("pieces/zapato.png", Gdx.graphics.getWidth() / 1.32f, Gdx.graphics.getHeight() / 18);
         screen = new Stage(new FillViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         screen.addActor(testing);
         screen.addActor(dice);
@@ -38,9 +42,45 @@ public abstract class BaseScreen implements Screen {
         dice.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("Click", "Clicked");
-                testing.setPosition(testing.getX()-(Gdx.graphics.getWidth()*(162/2088f)), testing.getY());
+                Random r = new Random();
+                int number = r.nextInt(6) + 1;
+                if (testing.getBoardPosition() >= 0 && testing.getBoardPosition() <= 9) {
+                    MoveByAction moveLeftAction = new MoveByAction();
+                    if (testing.getBoardPosition() == 0 || testing.getBoardPosition() == 9) {
+                        testing.setPosition(testing.getX() - (Gdx.graphics.getWidth() * ((Gdx.graphics.getWidth() / 9.5f) / Gdx.graphics.getWidth())), testing.getY());
+                    } else {
+                        testing.setPosition(testing.getX() - (Gdx.graphics.getWidth() * ((Gdx.graphics.getWidth() / 12.9f) / Gdx.graphics.getWidth())), testing.getY());
+                        /*moveLeftAction.setAmount(Gdx.graphics.getWidth()/12.9f*-number, 0);
+                        moveLeftAction.setDuration(0.3f*number);
+                        testing.addAction(moveLeftAction);*/
+                    }
+                } else if (testing.getBoardPosition() >= 10 && testing.getBoardPosition() <= 19) {
+                    if (testing.getBoardPosition() == 10 || testing.getBoardPosition() == 19) {
+                        testing.setPosition(testing.getX(), testing.getY() + (Gdx.graphics.getHeight() * ((Gdx.graphics.getHeight() / 9f) / Gdx.graphics.getHeight())));
+                    } else {
+                        testing.setPosition(testing.getX(), testing.getY() + (Gdx.graphics.getHeight() * ((Gdx.graphics.getHeight() / 13.012f) / Gdx.graphics.getHeight())));
+                    }
+                } else if (testing.getBoardPosition() >= 20 && testing.getBoardPosition() <= 29) {
+                    if (testing.getBoardPosition() == 20 || testing.getBoardPosition() == 29) {
+                        testing.setPosition(testing.getX() + (Gdx.graphics.getWidth() * ((Gdx.graphics.getWidth() / 9.5f) / Gdx.graphics.getWidth())), testing.getY());
+                    } else {
+                        testing.setPosition(testing.getX() + (Gdx.graphics.getWidth() * ((Gdx.graphics.getWidth() / 12.9f) / Gdx.graphics.getWidth())), testing.getY());
+                    }
+                } else if (testing.getBoardPosition() >= 30 && testing.getBoardPosition() <= 39) {
+                    if (testing.getBoardPosition() == 30 || testing.getBoardPosition() == 39) {
+                        testing.setPosition(testing.getX(), testing.getY() - (Gdx.graphics.getHeight() * ((Gdx.graphics.getHeight() / 9f) / Gdx.graphics.getHeight())));
+                    } else {
+                        testing.setPosition(testing.getX(), testing.getY() - (Gdx.graphics.getHeight() * ((Gdx.graphics.getHeight() / 13.012f) / Gdx.graphics.getHeight())));
+                    }
+                }
+                if (testing.getBoardPosition() == 39) {
+                    testing.setBoardPosition(0);
+                } else {
+                    testing.setBoardPosition(testing.getBoardPosition() + 1);
+                }
+                Gdx.app.log("Click", testing.getBoardPosition() + "");
             }
+
         });
 
         screen.addListener(new StageListener(screen));
