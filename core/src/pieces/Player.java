@@ -1,0 +1,44 @@
+package pieces;
+
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+
+import java.util.HashSet;
+
+public class Player extends Actor {
+    private Sprite sprite;
+    private boolean colliding;
+    private int speed;
+    private String name;
+    private HashSet<Integer> moving;
+
+    public Player(String texture, float x, float y) {
+        this.moving=new HashSet<>();
+        this.speed=10;
+        colliding=false;
+        sprite=new Sprite(new Texture(texture));
+        sprite.setBounds(x, y, Gdx.graphics.getWidth()/12, Gdx.graphics.getHeight()/12);
+        this.setPosition(x, y);
+        this.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        this.setOrigin(x,y);
+        sprite.setOrigin(this.getOriginX(),this.getOriginY());
+    }
+
+    public void moveByPixels(float x, float y) {
+        this.setPosition(x, y);
+        sprite.setPosition(x, y);
+    }
+
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        super.draw(batch, parentAlpha);
+        sprite.setPosition(getX(), getY());
+        sprite.setScale(getScaleX(), getScaleY());
+        sprite.setRotation(getRotation());
+        sprite.draw(batch);
+    }
+}
