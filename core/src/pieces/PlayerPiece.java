@@ -7,21 +7,14 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-import java.util.HashSet;
 
-public class Player extends Actor {
+public class PlayerPiece extends Actor {
     private Sprite sprite;
-    private boolean colliding;
-    private int speed;
     private String name;
-    private HashSet<Integer> moving;
     private int boardPosition;
 
-    public Player(String texture, float x, float y) {
-        this.moving=new HashSet<>();
-        this.speed=10;
+    public PlayerPiece(String texture, float x, float y) {
         this.boardPosition=1;
-        colliding=false;
         sprite=new Sprite(new Texture(texture));
         sprite.setBounds(x, y, Gdx.graphics.getWidth()/12, Gdx.graphics.getHeight()/12);
         this.setPosition(x, y);
