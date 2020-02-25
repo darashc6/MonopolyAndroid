@@ -20,4 +20,10 @@
         <item>Guerrero</item>
         <item>Zapato</item>
     </string-array>
+    <string name="exit_application_title">¿Salir de la applicación?</string>
+    <string name="exit_application_message">¿Estás seguro de que quieres salir de mi maravilloso juego que definitivamente (100% real no fake) no es un copy-paste del juego del año pasado?</string>
+    <string name="exit_application_negative">No</string>
+    <string name="exit_application_positive">Si</string>
+    <string name="exit_application_negative_toast">Eres una persona maravillosa :). Le deseo lo mejor en el futuro.</string>
+    <string name="exit_application_positive_toast">:(</string>
 </resources>

@@ -14,7 +14,7 @@ public class PlayerPiece extends Actor {
     private int boardPosition;
 
     public PlayerPiece(String texture, float x, float y) {
-        this.boardPosition=1;
+        this.boardPosition=0;
         sprite=new Sprite(new Texture(texture));
         sprite.setBounds(x, y, Gdx.graphics.getWidth()/12, Gdx.graphics.getHeight()/12);
         this.setPosition(x, y);

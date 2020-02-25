@@ -1,5 +1,6 @@
 package com.darash.monopoly
 
+import Constants.Functions
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -22,5 +23,9 @@ class MainActivity : AppCompatActivity() {
         // TODO val newGame=Intent(this, NewGameActivity::class.java)
         val newGame=Intent(this, AndroidLauncher::class.java)
         startActivity(newGame)
+    }
+
+    override fun onBackPressed() {
+        Functions.exitApplicaction(this)
     }
 }
