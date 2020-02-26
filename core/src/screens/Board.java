@@ -7,6 +7,6 @@ public class Board extends BaseScreen {
 
     public Board(MyGame mg) {
         super(mg);
-        this.background=new Texture("board/board_image.jpg");
+        this.background=new Texture("board/correct_board.PNG");
     }
 }
