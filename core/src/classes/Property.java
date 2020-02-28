@@ -111,7 +111,6 @@ public class Property {
                 ", mortgagePrice=" + mortgagePrice +
                 ", isMortgaged=" + isMortgaged +
                 ", redeemPrice=" + redeemPrice +
-                ", owner=" + owner +
                 '}';
     }
 }

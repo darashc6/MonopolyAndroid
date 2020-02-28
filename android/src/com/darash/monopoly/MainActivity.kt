@@ -20,8 +20,8 @@ class MainActivity : AppCompatActivity() {
      * Function that starts a new game activity
      */
     fun startNewGameActivity(view: View) {
-        // TODO val newGame=Intent(this, NewGameActivity::class.java)
-        val newGame=Intent(this, AndroidLauncher::class.java)
+        val newGame=Intent(this, NewGameActivity::class.java)
+        // val newGame=Intent(this, AndroidLauncher::class.java)
         startActivity(newGame)
     }
 

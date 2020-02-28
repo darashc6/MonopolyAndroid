@@ -43,6 +43,38 @@ public class Square {
     }
 
     /**
+     * Getter that returns the type of square
+     * @return Type of the square
+     */
+    public SquareType getType() {
+        return type;
+    }
+
+    /**
+     * Setter that modifies the type of square
+     * @param type The new type of square
+     */
+    public void setType(SquareType type) {
+        this.type = type;
+    }
+
+    /**
+     * Getter returning the all the property data
+     * @return Property data
+     */
+    public Property getProperty() {
+        return property;
+    }
+
+    /**
+     * Setter modifying the property data
+     * @param property Modified property
+     */
+    public void setProperty(Property property) {
+        this.property = property;
+    }
+
+    /**
      * Function initializing all the squares on the board
      * @return Array of the squares with all its data
      */
@@ -94,34 +126,57 @@ public class Square {
     }
 
     /**
-     * Getter that returns the type of square
-     * @return Type of the square
+     * Function initializing all the posible cases of the community chest
+     * @return Array of string with all the posible cases
      */
-    public SquareType getType() {
-        return type;
+    public static String[] initCommunityChest() {
+        String[] communityChest=new String[14];
+
+        communityChest[0]="SALGA DE LA CÁRCEL GRATIS";
+        communityChest[1]="Honorarios médicos, pague 50€";
+        communityChest[2]="Vencimiento de fondo vacacional, reciba 100€.";
+        communityChest[3]="Vencimiento de seguro de vida. Cobre 100€.";
+        communityChest[4]="Pague colegiaturas por 50€.";
+        communityChest[5]="Devolución de impuestos. Cobre 20€.";
+        communityChest[6]="Pague cuenta de hospital por 100€.";
+        communityChest[7]="Váyase a la CÁRCEL. No pase por 'GO', no cobra 200€.";
+        communityChest[8]="Reciba 25€ por su consultoria.";
+        communityChest[9]="Herede 100€.";
+        communityChest[10]="Por venta de acciones, reciba 50€.";
+        communityChest[11]="Consiguió 2º lugar en un concurso de belleza. Cobre 10€.";
+        communityChest[12]="Avance a 'GO'. Cobre 200€.";
+        communityChest[13]="Error bancario a su favor. Cobre 200€.";
+
+        return communityChest;
     }
 
     /**
-     * Setter that modifies the type of square
-     * @param type The new type of square
+     * Function initializing all the posible cases in chance
+     * @return Array of strings with all the posible chances
      */
-    public void setType(SquareType type) {
-        this.type = type;
+    public static String[] initChance() {
+        String[] chance=new String[11];
+
+        chance[0]="Avance a ISLAS CANARIAS.";
+        chance[1]="Viaje estación MÁLAGA MARIA ZAMBRANO, si pasa por 'GO' cobra 200€.";
+        chance[2]="Por cumplimiento en pago del préstamo de construcción cobre 150€.";
+        chance[3]="Avance a VALENCIA. Si pasa por 'GO' cobre 200€.";
+        chance[4]="Váyase a la CÁRCEL. No pase por 'GO', no cobra 200€.";
+        chance[5]="Avance a 'GO', cobre 200€.";
+        chance[6]="El banco le paga dividendos por 50€.";
+        chance[7]="SALGA DE LA CARCEL GRATIS";
+        chance[8]="Avance a ZARAGOZA. Si pasa por 'GO' cobre 200€.";
+        chance[9]="Retroceda 3 casillas.";
+        chance[10]="Pague multa por exceso de velocidad. 15€.";
+
+        return chance;
     }
 
-    /**
-     * Getter returning the all the property data
-     * @return Property data
-     */
-    public Property getProperty() {
-        return property;
-    }
-
-    /**
-     * Setter modifying the property data
-     * @param property Modified property
-     */
-    public void setProperty(Property property) {
-        this.property = property;
+    @Override
+    public String toString() {
+        return "Square{" +
+                "type=" + type +
+                ", property=" + property +
+                '}';
     }
 }

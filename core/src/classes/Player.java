@@ -140,4 +140,28 @@ public class Player extends Actor {
         sprite.setRotation(getRotation());
         sprite.draw(batch);
     }
+
+    public void buyProperty(Square[] s) {
+        s[this.getBoardPosition()].getProperty().setOwner(this);
+        this.getPropertiesBought().add(s[this.getBoardPosition()].getProperty());
+        this.setMoney(this.getMoney()-s[this.getBoardPosition()].getProperty().getValue());
+
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "sprite=" + sprite +
+                ", name='" + name + '\'' +
+                ", boardPosition=" + boardPosition +
+                ", selectedPiece='" + selectedPiece + '\'' +
+                ", money=" + money +
+                ", propertiesBought=" + propertiesBought +
+                ", propertiesMortgaged=" + propertiesMortgaged +
+                ", propertiesRedeemable=" + propertiesRedeemable +
+                ", isBankrupt=" + isBankrupt +
+                ", isInJail=" + isInJail +
+                ", nGetOutOfJailFreeCards=" + nGetOutOfJailFreeCards +
+                '}';
+    }
 }
