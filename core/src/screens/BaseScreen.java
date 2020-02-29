@@ -48,6 +48,7 @@ public abstract class BaseScreen implements Screen {
     private UnmortgageButton unmortgageButton;
     private CommunityChestButton chestButton;
     private ChanceButton chanceButton;
+    private int num;
 
     protected BaseScreen(MyGame mg) {
         this.game = mg;
@@ -118,115 +119,24 @@ public abstract class BaseScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Random r = new Random();
-                int number = r.nextInt(6) + 1;
-                int number2 = r.nextInt(6) + 1;
-                SequenceAction sa=new SequenceAction();
-                for (int i=0; i<(number+number2); i++) {
-                    if (testing.getBoardPosition() >= 0 && testing.getBoardPosition() <= 9) {
-                        MoveByAction moveLeft = new MoveByAction();
-                        if (testing.getBoardPosition() == 0 || testing.getBoardPosition() == 9) {
-                            moveLeft.setAmountX(Gdx.graphics.getWidth()/14.91428f*-1);
-                            moveLeft.setDuration(0.4f);
-                            sa.addAction(moveLeft);
-                            testing.addAction(sa);
-                        } else {
-                            moveLeft.setAmountX(Gdx.graphics.getWidth()/18.15652f*-1);
-                            moveLeft.setDuration(0.4f);
-                            sa.addAction(moveLeft);
-                            testing.addAction(sa);
-                        }
-                    } else if (testing.getBoardPosition() >= 10 && testing.getBoardPosition() <= 19) {
-                        MoveByAction moveUp = new MoveByAction();
-                        if (testing.getBoardPosition() == 10 || testing.getBoardPosition() == 19) {
-                            moveUp.setAmountY(Gdx.graphics.getHeight()/9.81818f);
-                            moveUp.setDuration(0.4f);
-                            sa.addAction(moveUp);
-                            testing.addAction(sa);
-                        } else {
-                            moveUp.setAmountY(Gdx.graphics.getHeight()/14.02597f);
-                            moveUp.setDuration(0.4f);
-                            sa.addAction(moveUp);
-                            testing.addAction(sa);
-                        }
-                    } else if (testing.getBoardPosition() >= 20 && testing.getBoardPosition() <= 29) {
-                        MoveByAction moveRight = new MoveByAction();
-                        if (testing.getBoardPosition() == 20 || testing.getBoardPosition() == 29) {
-                            moveRight.setAmountX(Gdx.graphics.getWidth()/14.91428f);
-                            moveRight.setDuration(0.4f);
-                            sa.addAction(moveRight);
-                            testing.addAction(sa);
-                        } else {
-                            moveRight.setAmountX(Gdx.graphics.getWidth()/18.15652f);
-                            moveRight.setDuration(0.4f);
-                            sa.addAction(moveRight);
-                            testing.addAction(sa);
-                        }
-                    } else if (testing.getBoardPosition() >= 30 && testing.getBoardPosition() <= 39) {
-                        MoveByAction moveDown = new MoveByAction();
-                        if (testing.getBoardPosition() == 30 || testing.getBoardPosition() == 39) {
-                            moveDown.setAmountY(Gdx.graphics.getHeight()/9.81818f*-1);
-                            moveDown.setDuration(0.4f);
-                            sa.addAction(moveDown);
-                            testing.addAction(sa);
-                        } else {
-                            moveDown.setAmountY(Gdx.graphics.getHeight()/14.02597f*-1);
-                            moveDown.setDuration(0.4f);
-                            sa.addAction(moveDown);
-                            testing.addAction(sa);
-                        }
-                    }
-                    if (testing.getBoardPosition() == 39) {
-                        testing.setBoardPosition(0);
-                        Gdx.app.log("Dimensiones 0: ", testing.getX()+", "+testing.getY());
-                    } else {
-                        testing.setBoardPosition(testing.getBoardPosition() + 1);
-                    }
-                }
-                Gdx.app.log("Click", testing.getBoardPosition() + "");
-                Gdx.app.log("Dice", number+number2+"");
-                Gdx.app.log("Type", board[testing.getBoardPosition()].getType().toString());
-                switch (board[testing.getBoardPosition()].getType()) {
-                    case CITY:
-                    case STATION:
-                        if (board[testing.getBoardPosition()].getProperty().getOwner()==null) {
-                            buyButton.setVisible(true);
-                            auctionButton.setVisible(true);
-                            diceButton.setVisible(false);
-                        } else {
-                            GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
-                            bDialog.setTitle("Propiedad Comprada");
-                            Property prop=board[testing.getBoardPosition()].getProperty();
-                            bDialog.setMessage("La propiedad '"+prop.getName()+ "' está comprada por "+prop.getOwner().getName()+
-                                    ". Debes pagar "+prop.getRentPrice()+"€");
+                final int number = r.nextInt(6) + 1;
+                final int number2 = r.nextInt(6) + 1;
 
-                            bDialog.setClickListener(new ButtonClickListener() {
-                                @Override
-                                public void click(int button) {
-
-                                }
-                            });
-                            bDialog.addButton("OK");
-                            bDialog.build().show();
-                            testing.setMoney(testing.getMoney()-prop.getRentPrice());
+                if (!testing.isInJail()) {
+                    GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
+                    bDialog.setTitle(testing.getName()+" ha tirado dados");
+                    bDialog.setMessage("Dado 1: "+number+"\nDado 2: "+number2);
+                    bDialog.addButton("OK");
+                    bDialog.build().show();
+                    bDialog.setClickListener(new ButtonClickListener() {
+                        @Override
+                        public void click(int button) {
+                            testing.playerMovement((number+number2), 0.5f, false);
+                            landingSituations();
                         }
-                        break;
-                    case COMMUNITY_CHEST:
-                        chestButton.setVisible(true);
-                        diceButton.setVisible(false);
-                        break;
-                    case CHANCE:
-                        chanceButton.setVisible(true);
-                        diceButton.setVisible(false);
-                        break;
-                    case GO:
-                        testing.setMoney(testing.getMoney()+200);
-                        break;
-                    case TAXES:
-                        break;
-                    case NO_PARKING:
-                        break;
-                    default:
-                        break;
+                    });
+                } else {
+
                 }
             }
         });
@@ -250,11 +160,6 @@ public abstract class BaseScreen implements Screen {
                         diceButton.setVisible(true);
                     }
                 });
-
-                Gdx.app.log("Comprar", "Propiedad Comprada");
-                Gdx.app.log("Comprar", "Se ha comprado "+board[testing.getBoardPosition()].getProperty());
-                Gdx.app.log("Comprar", "Nuevo balance del usuario: "+testing.getMoney());
-                Gdx.app.log("Comprar", testing.getPropertiesBought()+"");
             }
         });
 
@@ -262,7 +167,7 @@ public abstract class BaseScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Random r=new Random();
-                final int num=r.nextInt(communityChest.length);
+                num=r.nextInt(communityChest.length);
                 String textCommunityChest=communityChest[num];
 
                 GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
@@ -293,7 +198,12 @@ public abstract class BaseScreen implements Screen {
                                 testing.setMoney(testing.getMoney()-100);
                                 break;
                             case 7:
-                                // TODO Case go to jail
+                                if (testing.getBoardPosition()-10<=0) {
+                                    testing.playerMovement(testing.getBoardPosition()-10, 1f, true);
+                                } else {
+                                    testing.playerMovement(10-testing.getBoardPosition(), 0.5f, false);
+                                }
+                                testing.setInJail(true);
                                 break;
                             case 8:
                                 testing.setMoney(testing.getMoney()+25);
@@ -305,7 +215,7 @@ public abstract class BaseScreen implements Screen {
                                 testing.setMoney(testing.getMoney()+10);
                                 break;
                             case 12:
-                                // TODO Case 'GO'
+                                testing.playerMovement(40-testing.getBoardPosition(), 1f, false);
                                 break;
                             case 13:
                                 testing.setMoney(testing.getMoney()+200);
@@ -323,7 +233,8 @@ public abstract class BaseScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Random r=new Random();
-                String textChance=chance[r.nextInt(chance.length)];
+                num=r.nextInt(chance.length);
+                String textChance=chance[num];
 
                 GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
                 bDialog.setTitle("Suerte");
@@ -333,9 +244,64 @@ public abstract class BaseScreen implements Screen {
                 bDialog.setClickListener(new ButtonClickListener() {
                     @Override
                     public void click(int button) {
-                        // TODO switch de suerte
+                        switch (num) {
+                            case 0:
+                                testing.playerMovement(39-testing.getBoardPosition(), 1f, false);
+                                landingSituations();
+                                break;
+                            case 1:
+                                testing.playerMovement(40-testing.getBoardPosition()+5, 1f, false);
+                                testing.setMoney(testing.getMoney()+200);
+                                landingSituations();
+                                break;
+                            case 2:
+                                testing.setMoney(testing.getMoney()+150);
+                                break;
+                            case 3:
+                                if (13-testing.getBoardPosition()<=0) {
+                                    testing.playerMovement(40-testing.getBoardPosition()+13, 1f, false);
+                                    testing.setMoney(testing.getMoney()+200);
+                                } else {
+                                    testing.playerMovement(13-testing.getBoardPosition(), 0.5f, false);
+                                }
+                                landingSituations();
+                                break;
+                            case 4:
+                                if (10-testing.getBoardPosition()<=0) {
+                                    testing.playerMovement(testing.getBoardPosition()-10, 1f, true);
+                                } else {
+                                    testing.playerMovement(10-testing.getBoardPosition(), 0.5f, false);
+                                }
+                                testing.setInJail(true);
+                                break;
+                            case 5:
+                                testing.playerMovement(40-testing.getBoardPosition(), 1f, false);
+                                testing.setMoney(testing.getMoney()+200);
+                                break;
+                            case 6:
+                                testing.setMoney(testing.getMoney()+50);
+                                break;
+                            case 7:
+                                testing.setnGetOutOfJailFreeCards(testing.getnGetOutOfJailFreeCards()+1);
+                                break;
+                            case 8:
+                                if (24-testing.getBoardPosition()<=0) {
+                                    testing.playerMovement(40-testing.getBoardPosition()+24, 1f, false);
+                                    testing.setMoney(testing.getMoney()+200);
+                                } else {
+                                    testing.playerMovement(24-testing.getBoardPosition(), 0.5f, false);
+                                }
+                                landingSituations();
+                                break;
+                            case 9:
+                                testing.playerMovement(3, 0.5f, true);
+                                landingSituations();
+                                break;
+                            case 10:
+                                testing.setMoney(testing.getMoney()-15);
+                                break;
+                        }
                         chanceButton.setVisible(false);
-                        diceButton.setVisible(true);
                     }
                 });
             }
@@ -343,6 +309,92 @@ public abstract class BaseScreen implements Screen {
 
         screen.addListener(new StageListener(screen));
         Gdx.input.setInputProcessor(screen);
+    }
+
+    private void landingSituations() {
+        switch (board[testing.getBoardPosition()].getType()) {
+            case CITY:
+            case STATION:
+                if (board[testing.getBoardPosition()].getProperty().getOwner()==null) {
+                    buyButton.setVisible(true);
+                    auctionButton.setVisible(true);
+                    diceButton.setVisible(false);
+                } else {
+                    GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
+                    bDialog.setTitle("Propiedad Comprada");
+                    final Property prop=board[testing.getBoardPosition()].getProperty();
+                    bDialog.setMessage("La propiedad '"+prop.getName()+ "' está comprada por "+prop.getOwner().getName()+
+                            ". Debes pagar "+prop.getRentPrice()+"€");
+
+                    bDialog.setClickListener(new ButtonClickListener() {
+                        @Override
+                        public void click(int button) {
+                            diceButton.setVisible(true);
+                            testing.setMoney(testing.getMoney()-prop.getRentPrice());
+                        }
+                    });
+                    bDialog.addButton("OK");
+                    bDialog.build().show();
+                }
+                break;
+            case COMMUNITY_CHEST:
+                chestButton.setVisible(true);
+                diceButton.setVisible(false);
+                break;
+            case CHANCE:
+                chanceButton.setVisible(true);
+                diceButton.setVisible(false);
+                break;
+            case GO:
+                testing.setMoney(testing.getMoney()+200);
+                break;
+            case TAXES:
+                if (testing.getBoardPosition()==4) {
+                    GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
+                    bDialog.setTitle("Tasas");
+                    bDialog.setMessage("Deberás cobrar el IVA. Pagar el 21% de tu cuenta bancaria.");
+
+                    bDialog.setClickListener(new ButtonClickListener() {
+                        @Override
+                        public void click(int button) {
+                            diceButton.setVisible(true);
+                            testing.setMoney((int) (testing.getMoney()*0.79));
+                        }
+                    });
+                    bDialog.addButton("OK");
+                    bDialog.build().show();
+                } else if (testing.getBoardPosition()==36) {
+                    GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
+                    bDialog.setTitle("Tasas");
+                    bDialog.setMessage("Gastos mensuales. Pagar 100€ de tu cuenta bancaria.");
+
+                    bDialog.setClickListener(new ButtonClickListener() {
+                        @Override
+                        public void click(int button) {
+                            diceButton.setVisible(true);
+                            testing.setMoney(testing.getMoney()-100);
+                        }
+                    });
+                    bDialog.addButton("OK");
+                    bDialog.build().show();
+                }
+                break;
+            case NO_PARKING:
+                GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
+                bDialog.setTitle("Carcel");
+                bDialog.setMessage("Ha aparcado el una zona de no parking. Váyase a la cárcel");
+
+                bDialog.setClickListener(new ButtonClickListener() {
+                    @Override
+                    public void click(int button) {
+                        testing.playerMovement(testing.getBoardPosition()-10, 15f, true);
+                        testing.setInJail(true);
+                    }
+                });
+                bDialog.addButton("OK");
+                bDialog.build().show();
+                break;
+        }
     }
 
     @Override

@@ -3,17 +3,21 @@ package Constants
 import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import com.darash.monopoly.R
-import kotlin.coroutines.coroutineContext
 
 
+/**
+ * Class where all the constant functions are stored
+ */
 class Functions {
 
     companion object {
+
+        /**
+         * Function where an AlertDialog show when the user is about to exit the app
+         */
         fun exitApplicaction(context: Context) {
             val dialog = AlertDialog.Builder(context)
             dialog.setIcon(R.drawable.ic_warning_black_24dp)

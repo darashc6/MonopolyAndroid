@@ -15,15 +15,15 @@ public class Property {
 
     /**
      * Main constructor of the Property class
+     * At the beginning of the game, each property doesn't have an owner, nor is it mortgaged
      * @param boardPosition Position on the board
      * @param name Property's name
      * @param value Property's rent value
      * @param rentPrice Property's mortgage value
      * @param mortgagePrice Checks if the property is mortgaged
      * @param redeemPrice Property's unmortgage value
-     * @param owner Property's owner
      */
-    public Property(int boardPosition, String name, int value, int rentPrice, int mortgagePrice, int redeemPrice, Player owner) {
+    public Property(int boardPosition, String name, int value, int rentPrice, int mortgagePrice, int redeemPrice) {
         this.boardPosition = boardPosition;
         this.name = name;
         this.value = value;
@@ -31,7 +31,7 @@ public class Property {
         this.mortgagePrice = mortgagePrice;
         this.isMortgaged = false;
         this.redeemPrice = redeemPrice;
-        this.owner = owner;
+        this.owner = null;
     }
 
     // Start of getters and setters of Property
