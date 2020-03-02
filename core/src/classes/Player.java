@@ -41,7 +41,7 @@ public class Player extends Actor {
         this.propertiesMortgaged = new ArrayList<Property>();
         this.propertiesRedeemable = new ArrayList<Property>();
         this.isBankrupt = false;
-        this.isInJail = false;
+        this.isInJail = true;
         this.nGetOutOfJailFreeCards = 0;
 
         sprite=new Sprite(new Texture(texture));

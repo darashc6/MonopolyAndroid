@@ -1,6 +1,8 @@
 package com.darash.monopoly
 
 import android.content.Context
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +20,7 @@ class CustomAdapter(private val context: Context, var nPlayers: Int): BaseAdapte
         val spinnerPieces=view.findViewById<Spinner>(R.id.spinnerPieces)
         val imagePiece=view.findViewById<ImageView>(R.id.imageViewPiece)
         val adapterSpinner= ArrayAdapter.createFromResource(context, R.array.pieces, R.layout.custom_spinner_item)
+        val playerNameText=view.findViewById<EditText>(R.id.playerTextName)
         adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerPieces.adapter=adapterSpinner
         spinnerPieces.onItemSelectedListener=(object : AdapterView.OnItemSelectedListener{
@@ -52,6 +55,21 @@ class CustomAdapter(private val context: Context, var nPlayers: Int): BaseAdapte
                         imagePiece.setImageResource(context.resources.getIdentifier("zapato", "drawable", context.packageName))
                     }
                 }
+            }
+
+        })
+
+        playerNameText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+                playerNameText.text=playerNameText.text
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
             }
 
         })

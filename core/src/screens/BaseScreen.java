@@ -104,7 +104,7 @@ public abstract class BaseScreen implements Screen {
                 bDialog.setClickListener(new ButtonClickListener() {
                     @Override
                     public void click(int button) {
-                        // handle button click here
+                        // TODO Set auction dialog
                     }
                 });
 
@@ -122,7 +122,7 @@ public abstract class BaseScreen implements Screen {
                 final int number = r.nextInt(6) + 1;
                 final int number2 = r.nextInt(6) + 1;
 
-                if (!testing.isInJail()) {
+                if (!testing.isInJail()) { // If player isn't in jail
                     GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
                     bDialog.setTitle(testing.getName()+" ha tirado dados");
                     bDialog.setMessage("Dado 1: "+number+"\nDado 2: "+number2);
@@ -135,8 +135,68 @@ public abstract class BaseScreen implements Screen {
                             landingSituations();
                         }
                     });
-                } else {
-
+                } else { // If player is in jail
+                    GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
+                    bDialog.setTitle("Carcel");
+                    bDialog.setMessage("Estas en la carcel. Elija lo que desea hacer");
+                    bDialog.addButton("Dados");
+                    bDialog.addButton("Pagar 50€");
+                    if (testing.getnGetOutOfJailFreeCards()>0) {
+                        bDialog.addButton("Usar carta");
+                    }
+                    bDialog.build().show();
+                    bDialog.setClickListener(new ButtonClickListener() {
+                        @Override
+                        public void click(int button) {
+                            if (button==0) { // If the player opts to throw de dice
+                                GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
+                                bDialog.setTitle(testing.getName()+" ha tirado dados");
+                                bDialog.setMessage("Dado 1: "+number+"\nDado 2: "+number2);
+                                bDialog.addButton("OK");
+                                bDialog.build().show();
+                                bDialog.setClickListener(new ButtonClickListener() {
+                                    @Override
+                                    public void click(int button) {
+                                        if (number==number2) {
+                                            testing.setInJail(false);
+                                            testing.playerMovement((number+number2), 0.5f, false);
+                                            landingSituations();
+                                        }
+                                    }
+                                });
+                            } else if (button==1) { // If the player wants to pay his way out of jail
+                                testing.setMoney(testing.getMoney()-50);
+                                testing.setInJail(false);
+                                GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
+                                bDialog.setTitle(testing.getName()+" ha tirado dados");
+                                bDialog.setMessage("Dado 1: "+number+"\nDado 2: "+number2);
+                                bDialog.addButton("OK");
+                                bDialog.build().show();
+                                bDialog.setClickListener(new ButtonClickListener() {
+                                    @Override
+                                    public void click(int button) {
+                                        testing.playerMovement((number+number2), 0.5f, false);
+                                        landingSituations();
+                                    }
+                                });
+                            } else if (button==2) { // If the player wants to use his 'Get out of jail free' card
+                                testing.setnGetOutOfJailFreeCards(testing.getnGetOutOfJailFreeCards()-1);
+                                testing.setInJail(false);
+                                GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
+                                bDialog.setTitle(testing.getName()+" ha tirado dados");
+                                bDialog.setMessage("Dado 1: "+number+"\nDado 2: "+number2);
+                                bDialog.addButton("OK");
+                                bDialog.build().show();
+                                bDialog.setClickListener(new ButtonClickListener() {
+                                    @Override
+                                    public void click(int button) {
+                                        testing.playerMovement((number+number2), 0.5f, false);
+                                        landingSituations();
+                                    }
+                                });
+                            }
+                        }
+                    });
                 }
             }
         });
