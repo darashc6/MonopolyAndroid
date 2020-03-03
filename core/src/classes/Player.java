@@ -29,27 +29,26 @@ public class Player extends Actor {
     /**
      * Initial constructor of the Player class
      * At the beginning of the match, the player nor is bankrupt, nor is he in jail, nor does he have 'Get out of jail free' Cards, and nor does he have any properties
-     * @param texture Texture of the piece chosen
-     * @param x Position x initial
-     * @param y Position y initial
+     * @param name Player name
+     * @param piece Selected piece
      */
-    public Player(String texture, float x, float y) {
-        this.name = "Player";
+    public Player(String name, String piece) {
+        this.name = name;
         this.boardPosition = 0;
         this.money = 2000;
         this.propertiesBought = new ArrayList<Property>();
         this.propertiesMortgaged = new ArrayList<Property>();
         this.propertiesRedeemable = new ArrayList<Property>();
         this.isBankrupt = false;
-        this.isInJail = true;
+        this.isInJail = false;
         this.nGetOutOfJailFreeCards = 0;
 
-        sprite=new Sprite(new Texture(texture));
-        sprite.setBounds(x, y, Gdx.graphics.getWidth()/25, Gdx.graphics.getHeight()/25);
-        this.setPosition(x, y);
+        /*sprite=new Sprite(new Texture("pieces/"+piece+".png"));
+        sprite.setBounds(Gdx.graphics.getWidth()/1.6704f, Gdx.graphics.getHeight()/6.75f, Gdx.graphics.getWidth()/25f, Gdx.graphics.getHeight()/25f);
+        this.setPosition(Gdx.graphics.getWidth()/1.6704f, Gdx.graphics.getHeight()/6.75f);
         this.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-        this.setOrigin(x,y);
-        sprite.setOrigin(this.getOriginX(),this.getOriginY());
+        this.setOrigin(Gdx.graphics.getWidth()/1.6704f, Gdx.graphics.getHeight()/6.75f);
+        sprite.setOrigin(this.getOriginX(),this.getOriginY());*/
     }
 
     // Start of getters and setters of Player

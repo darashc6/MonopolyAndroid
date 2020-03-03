@@ -57,7 +57,7 @@ public abstract class BaseScreen implements Screen {
         chance=Square.initChance();
         dialogs = GDXDialogsSystem.install();
         screen = new Stage(new FillViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
-        testing = new Player("pieces/zapato.png", Gdx.graphics.getWidth()/1.6704f, Gdx.graphics.getHeight()/6.75f);
+        testing = new Player("Jugador", "zapato");
         startButton = new StartGameButton(Gdx.graphics.getWidth()/3.7963f, Gdx.graphics.getHeight()/2.16f);
         buyButton = new BuyButton(Gdx.graphics.getWidth()/4.64f, Gdx.graphics.getHeight()/2.16f);
         auctionButton = new AuctionButton(Gdx.graphics.getWidth()/2.784f, Gdx.graphics.getHeight()/2.16f);
