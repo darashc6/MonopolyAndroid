@@ -1,6 +1,7 @@
 package com.darash.monopoly
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -61,8 +62,9 @@ class NewGameActivity : AppCompatActivity() {
      * Function where the new game starts
      */
     fun startGame(view: View) {
-        //val newGame=Intent(this, AndroidLauncher::class.java)
-        //startActivity(newGame)
-        Toast.makeText(this, arrayPlayers[1].toString(), Toast.LENGTH_SHORT).show()
+        val newGame=Intent(this, AndroidLauncher::class.java)
+        var bundle=Bundle()
+        newGame.putExtra("arrayPlayers", arrayPlayers)
+        startActivity(newGame)
     }
 }

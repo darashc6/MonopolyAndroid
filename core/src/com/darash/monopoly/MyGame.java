@@ -7,15 +7,23 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.util.ArrayList;
+
+import classes.Player;
 import screens.BaseScreen;
 import screens.Board;
 
 public class MyGame extends Game {
 	private BaseScreen currentScreen;
+	private ArrayList<Player> arrayPlayers;
+
+	public MyGame(ArrayList<Player> players) {
+		this.arrayPlayers=players;
+	}
 
 	@Override
 	public void create () {
-		this.setCurrentScreen(new Board(this));
+		this.setCurrentScreen(new Board(this, arrayPlayers));
 	}
 
 	@Override
