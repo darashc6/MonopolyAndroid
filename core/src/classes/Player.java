@@ -43,6 +43,7 @@ public class Player extends Actor implements Serializable {
      */
     public Player(String name, String piece) {
         this.name = name;
+        this.selectedPiece=piece;
         this.boardPosition = 0;
         this.money = 2000;
         this.propertiesBought = new ArrayList<Property>();
@@ -53,9 +54,10 @@ public class Player extends Actor implements Serializable {
         this.nGetOutOfJailFreeCards = 0;
     }
 
-    public Player(String name, String texture, float x, float y) {
+    public Player(String name, String piece, float x, float y) {
         this.name = name;
         this.boardPosition = 0;
+        this.selectedPiece=piece;
         this.money = 2000;
         this.propertiesBought = new ArrayList<Property>();
         this.propertiesMortgaged = new ArrayList<Property>();
@@ -64,7 +66,7 @@ public class Player extends Actor implements Serializable {
         this.isInJail = false;
         this.nGetOutOfJailFreeCards = 0;
 
-        sprite=new Sprite(new Texture(texture));
+        sprite=new Sprite(new Texture("pieces/"+piece.toLowerCase()+".png"));
         sprite.setBounds(x, y, Gdx.graphics.getWidth()/25f, Gdx.graphics.getHeight()/25f);
         this.setPosition(x, y);
         this.setSize(Gdx.graphics.getWidth()/25f,Gdx.graphics.getHeight()/25f);
@@ -231,6 +233,7 @@ public class Player extends Actor implements Serializable {
                 }
                 if (this.getBoardPosition() == 39) {
                     this.setBoardPosition(0);
+                    this.setMoney(this.getMoney()+200);
                     Gdx.app.log("Dimensiones 0: ", this.getX()+", "+this.getY());
                 } else {
                     this.setBoardPosition(this.getBoardPosition() + 1);

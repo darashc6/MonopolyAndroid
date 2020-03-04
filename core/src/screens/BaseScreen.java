@@ -2,12 +2,14 @@ package screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.actions.MoveByAction;
-import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.darash.monopoly.MyGame;
@@ -20,6 +22,7 @@ import buttons.ChanceButton;
 import buttons.CommunityChestButton;
 import buttons.EndTurnButton;
 import buttons.MortgageButton;
+import buttons.SaveButton;
 import buttons.StartGameButton;
 import buttons.ThrowDiceButton;
 import buttons.UnmortgageButton;
@@ -31,16 +34,14 @@ import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
 import de.tomgrill.gdxdialogs.core.dialogs.GDXButtonDialog;
 import de.tomgrill.gdxdialogs.core.listener.ButtonClickListener;
 import listeners.StageListener;
-import text.PlayerText;
 
 public abstract class BaseScreen implements Screen {
     protected MyGame game;
     protected Stage screen;
     protected Texture background;
     private static GDXDialogs dialogs;
-    private static ArrayList<Player> playablePlayers;
-    private ArrayList<Player> players;
-    private PlayerText testingText;
+    private static ArrayList<Player> players;
+    private SpriteBatch spriteBatch;
     private static Square[] board;
     private static String[] communityChest;
     private static String[] chance;
@@ -50,14 +51,15 @@ public abstract class BaseScreen implements Screen {
     private static ThrowDiceButton diceButton;
     private MortgageButton mortgageButton;
     private UnmortgageButton unmortgageButton;
+    private SaveButton saveButton;
     private static CommunityChestButton chestButton;
     private static ChanceButton chanceButton;
     private static EndTurnButton endButton;
-    private int num;
+    private BitmapFont fontText;
 
     protected BaseScreen(MyGame mg, ArrayList<Player> arrayPlayers) {
+        Gdx.app.log("Dimensiones", Gdx.graphics.getHeight()+", "+Gdx.graphics.getWidth());
         this.game = mg;
-        this.players = arrayPlayers;
         board=Square.initSquares();
         communityChest=Square.initCommunityChest();
         chance=Square.initChance();
@@ -67,13 +69,24 @@ public abstract class BaseScreen implements Screen {
         buyButton = new BuyButton(Gdx.graphics.getWidth()/4.64f, Gdx.graphics.getHeight()/2.16f);
         auctionButton = new AuctionButton(Gdx.graphics.getWidth()/2.784f, Gdx.graphics.getHeight()/2.16f);
         diceButton = new ThrowDiceButton(Gdx.graphics.getWidth()/3.7963f, Gdx.graphics.getHeight()/2.16f);
-        mortgageButton = new MortgageButton(Gdx.graphics.getWidth()/6.96f, Gdx.graphics.getHeight()/36f);
-        unmortgageButton = new UnmortgageButton(Gdx.graphics.getWidth()/2.784f, Gdx.graphics.getHeight()/36f);
+        mortgageButton = new MortgageButton(Gdx.graphics.getWidth()/16.704f, Gdx.graphics.getHeight()/36f);
+        unmortgageButton = new UnmortgageButton(Gdx.graphics.getWidth()/3.9771f, Gdx.graphics.getHeight()/36f);
         chestButton=new CommunityChestButton(Gdx.graphics.getWidth()/3.7963f, Gdx.graphics.getHeight()/2.16f);
         chanceButton=new ChanceButton(Gdx.graphics.getWidth()/3.7963f, Gdx.graphics.getHeight()/2.16f);
         endButton=new EndTurnButton(Gdx.graphics.getWidth()/3.7963f, Gdx.graphics.getHeight()/2.16f);
+        saveButton=new SaveButton(Gdx.graphics.getWidth()/2.2572f, Gdx.graphics.getHeight()/36f);
 
-        playablePlayers=new ArrayList<>();
+        spriteBatch=new SpriteBatch();
+        FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/comici.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        fontParameter.size = 40;
+        fontParameter.borderWidth = 2;
+        fontParameter.borderColor = Color.WHITE;
+        fontParameter.color = Color.BLACK;
+        fontText = fontGenerator.generateFont(fontParameter);
+
+
+        players=new ArrayList<>();
 
         screen.addActor(diceButton);
         screen.addActor(buyButton);
@@ -84,6 +97,8 @@ public abstract class BaseScreen implements Screen {
         screen.addActor(chestButton);
         screen.addActor(chanceButton);
         screen.addActor(endButton);
+        screen.addActor(saveButton);
+
         buyButton.setVisible(false);
         auctionButton.setVisible(false);
         diceButton.setVisible(false);
@@ -92,12 +107,12 @@ public abstract class BaseScreen implements Screen {
         chestButton.setVisible(false);
         chanceButton.setVisible(false);
         endButton.setVisible(false);
-        // screen.addActor(testingText);
+        saveButton.setVisible(true);
 
         for (int i=0; i<arrayPlayers.size(); i++) {
-            playablePlayers.add(new Player(arrayPlayers.get(i).getName(), "pieces/"+arrayPlayers.get(i).getSelectedPiece()+".png",
+            players.add(new Player(arrayPlayers.get(i).getName(), arrayPlayers.get(i).getSelectedPiece(),
                     Gdx.graphics.getWidth()/1.6704f, Gdx.graphics.getHeight()/6.75f));
-            screen.addActor(playablePlayers.get(i));
+            screen.addActor(players.get(i));
         }
 
         startButton.addListener(new ClickListener() {
@@ -106,6 +121,7 @@ public abstract class BaseScreen implements Screen {
                 diceButton.setVisible(true);
                 mortgageButton.setVisible(true);
                 unmortgageButton.setVisible(true);
+                saveButton.setVisible(true);
                 startButton.setVisible(false);
             }
         });
@@ -120,7 +136,7 @@ public abstract class BaseScreen implements Screen {
                 bDialog.setClickListener(new ButtonClickListener() {
                     @Override
                     public void click(int button) {
-                        // TODO Set auction dialog
+                        // TODO Auction Dialog
                     }
                 });
 
@@ -134,23 +150,23 @@ public abstract class BaseScreen implements Screen {
         diceButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("Jugador IA", playablePlayers.get(1).getPropertiesBought()+"");
-                Gdx.app.log("Jugador IA", playablePlayers.get(1)+"");
+                Gdx.app.log("Jugador IA", players.get(1).getPropertiesBought()+"");
+                Gdx.app.log("Jugador IA", players.get(1)+"");
                 Random r = new Random();
                 final int number = r.nextInt(6) + 1;
                 final int number2 = r.nextInt(6) + 1;
 
-                if (!playablePlayers.get(0).isInJail()) { // If player isn't in jail
+                if (!players.get(0).isInJail()) { // If player isn't in jail
                     GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
-                    bDialog.setTitle(playablePlayers.get(0).getName()+" ha tirado dados");
+                    bDialog.setTitle(players.get(0).getName()+" ha tirado dados");
                     bDialog.setMessage("Dado 1: "+number+"\nDado 2: "+number2);
                     bDialog.addButton("OK");
                     bDialog.build().show();
                     bDialog.setClickListener(new ButtonClickListener() {
                         @Override
                         public void click(int button) {
-                            playablePlayers.get(0).playerMovement((number+number2), 0.5f, false);
-                            landingSituations(playablePlayers.get(0));
+                            players.get(0).playerMovement((number+number2), 0.5f, false);
+                            landingSituations(players.get(0));
                         }
                     });
                 } else { // If player is in jail
@@ -159,16 +175,16 @@ public abstract class BaseScreen implements Screen {
                     bDialog.setMessage("Estas en la carcel. Elija lo que desea hacer");
                     bDialog.addButton("Dados");
                     bDialog.addButton("Pagar 50€");
-                    if (playablePlayers.get(0).getnGetOutOfJailFreeCards()>0) {
+                    if (players.get(0).getnGetOutOfJailFreeCards()>0) {
                         bDialog.addButton("Usar carta");
                     }
                     bDialog.build().show();
                     bDialog.setClickListener(new ButtonClickListener() {
                         @Override
                         public void click(int button) {
-                            if (button==0) { // If the player opts to throw de dice
+                            if (button==0) { // If the player opts to throw the dice
                                 GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
-                                bDialog.setTitle(playablePlayers.get(0).getName()+" ha tirado dados");
+                                bDialog.setTitle(players.get(0).getName()+" ha tirado dados");
                                 bDialog.setMessage("Dado 1: "+number+"\nDado 2: "+number2);
                                 bDialog.addButton("OK");
                                 bDialog.build().show();
@@ -176,40 +192,40 @@ public abstract class BaseScreen implements Screen {
                                     @Override
                                     public void click(int button) {
                                         if (number==number2) {
-                                            playablePlayers.get(0).setInJail(false);
-                                            playablePlayers.get(0).playerMovement((number+number2), 0.5f, false);
-                                            landingSituations(playablePlayers.get(0));
+                                            players.get(0).setInJail(false);
+                                            players.get(0).playerMovement((number+number2), 0.5f, false);
+                                            landingSituations(players.get(0));
                                         }
                                     }
                                 });
                             } else if (button==1) { // If the player wants to pay his way out of jail
-                                playablePlayers.get(0).setMoney(playablePlayers.get(0).getMoney()-50);
-                                playablePlayers.get(0).setInJail(false);
+                                players.get(0).setMoney(players.get(0).getMoney()-50);
+                                players.get(0).setInJail(false);
                                 GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
-                                bDialog.setTitle(playablePlayers.get(0).getName()+" ha tirado dados");
+                                bDialog.setTitle(players.get(0).getName()+" ha tirado dados");
                                 bDialog.setMessage("Dado 1: "+number+"\nDado 2: "+number2);
                                 bDialog.addButton("OK");
                                 bDialog.build().show();
                                 bDialog.setClickListener(new ButtonClickListener() {
                                     @Override
                                     public void click(int button) {
-                                        playablePlayers.get(0).playerMovement((number+number2), 0.5f, false);
-                                        landingSituations(playablePlayers.get(0));
+                                        players.get(0).playerMovement((number+number2), 0.5f, false);
+                                        landingSituations(players.get(0));
                                     }
                                 });
                             } else if (button==2) { // If the player wants to use his 'Get out of jail free' card
-                                playablePlayers.get(0).setnGetOutOfJailFreeCards(playablePlayers.get(0).getnGetOutOfJailFreeCards()-1);
-                                playablePlayers.get(0).setInJail(false);
+                                players.get(0).setnGetOutOfJailFreeCards(players.get(0).getnGetOutOfJailFreeCards()-1);
+                                players.get(0).setInJail(false);
                                 GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
-                                bDialog.setTitle(playablePlayers.get(0).getName()+" ha tirado dados");
+                                bDialog.setTitle(players.get(0).getName()+" ha tirado dados");
                                 bDialog.setMessage("Dado 1: "+number+"\nDado 2: "+number2);
                                 bDialog.addButton("OK");
                                 bDialog.build().show();
                                 bDialog.setClickListener(new ButtonClickListener() {
                                     @Override
                                     public void click(int button) {
-                                        playablePlayers.get(0).playerMovement((number+number2), 0.5f, false);
-                                        landingSituations(playablePlayers.get(0));
+                                        players.get(0).playerMovement((number+number2), 0.5f, false);
+                                        landingSituations(players.get(0));
                                     }
                                 });
                             }
@@ -224,14 +240,14 @@ public abstract class BaseScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
                 bDialog.setTitle("Propiedad Comprada");
-                Property prop=board[playablePlayers.get(0).getBoardPosition()].getProperty();
-                bDialog.setMessage(playablePlayers.get(0).getName()+" ha comprado "+prop.getName()+" por "+prop.getValue()+"€");
+                Property prop=board[players.get(0).getBoardPosition()].getProperty();
+                bDialog.setMessage(players.get(0).getName()+" ha comprado "+prop.getName()+" por "+prop.getValue()+"€");
                 bDialog.addButton("OK");
                 bDialog.build().show();
                 bDialog.setClickListener(new ButtonClickListener() {
                     @Override
                     public void click(int button) {
-                        playablePlayers.get(0).buyProperty(board);
+                        players.get(0).buyProperty(board);
 
                         buyButton.setVisible(false);
                         auctionButton.setVisible(false);
@@ -246,26 +262,94 @@ public abstract class BaseScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 // TODO AI Function here
                 endButton.setVisible(false);
-                for (int i=1; i<playablePlayers.size(); i++) {
+                for (int i=1; i<players.size(); i++) {
                     final int aiPlayer=i;
                     Random r = new Random();
                     final int number = r.nextInt(6) + 1;
                     final int number2 = r.nextInt(6) + 1;
-                    if (!playablePlayers.get(aiPlayer).isInJail()) { // If player isn't in jail
+                    if (!players.get(aiPlayer).isInJail()) { // If player isn't in jail
                         GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
-                        bDialog.setTitle(playablePlayers.get(aiPlayer).getName()+" ha tirado dados");
+                        bDialog.setTitle(players.get(aiPlayer).getName()+" ha tirado dados");
                         bDialog.setMessage("Dado 1: "+number+"\nDado 2: "+number2);
                         bDialog.addButton("OK");
                         bDialog.build().show();
                         bDialog.setClickListener(new ButtonClickListener() {
                             @Override
                             public void click(int button) {
-                                playablePlayers.get(aiPlayer).playerMovement((number+number2), 0.5f, false);
-                                landingSituations(playablePlayers.get(aiPlayer));
+                                players.get(aiPlayer).playerMovement((number+number2), 0.5f, false);
+                                landingSituations(players.get(aiPlayer));
                             }
                         });
-                    } else { // If player is in jail
-
+                    } else { // If AI Player is in jail
+                        // The order of preference for the AI Player to get out of jail is as follows:
+                        // 1º - The AI will check whether he has 'Get out of jail free' cards. If true, he will use them
+                        // 2º - If 1º option is false, he will check whether he has the amount necessary to pay the fine (50€). If true, he will pay the fine
+                        // 3º - If 2º option is false, he has no other option than throwing the dice. If he lands doubles, he will get out of jail.
+                        if (players.get(aiPlayer).getnGetOutOfJailFreeCards()>0) { // 1º Option
+                            players.get(aiPlayer).setnGetOutOfJailFreeCards(players.get(aiPlayer).getnGetOutOfJailFreeCards()-1);
+                            GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
+                            bDialog.setTitle(players.get(aiPlayer).getName()+" ha salido de la cárcel");
+                            bDialog.setMessage(players.get(aiPlayer).getName()+" ha salido de la cárcel usando su carta 'Salir de la cárcel gratis'");
+                            bDialog.addButton("OK");
+                            bDialog.setClickListener(new ButtonClickListener() {
+                                @Override
+                                public void click(int button) {
+                                    GDXButtonDialog dialogDiceThrow = dialogs.newDialog(GDXButtonDialog.class);
+                                    dialogDiceThrow.setTitle(players.get(aiPlayer).getName()+" ha tirado dados");
+                                    dialogDiceThrow.setMessage("Dado 1: "+number+"\nDado 2: "+number2);
+                                    dialogDiceThrow.addButton("OK");
+                                    dialogDiceThrow.build().show();
+                                    dialogDiceThrow.setClickListener(new ButtonClickListener() {
+                                        @Override
+                                        public void click(int button) {
+                                            players.get(aiPlayer).playerMovement((number+number2), 0.5f, false);
+                                            landingSituations(players.get(aiPlayer));
+                                        }
+                                    });
+                                }
+                            });
+                        } else if (players.get(aiPlayer).getMoney()>=50) { // 2º Option
+                            players.get(aiPlayer).setMoney(players.get(aiPlayer).getMoney()-50);
+                            GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
+                            bDialog.setTitle(players.get(aiPlayer).getName()+" ha salido de la cárcel");
+                            bDialog.setMessage(players.get(aiPlayer).getName()+" ha salido de la cárcel pagando 50€");
+                            bDialog.addButton("OK");
+                            bDialog.setClickListener(new ButtonClickListener() {
+                                @Override
+                                public void click(int button) {
+                                    GDXButtonDialog dialogDiceThrow = dialogs.newDialog(GDXButtonDialog.class);
+                                    dialogDiceThrow.setTitle(players.get(aiPlayer).getName()+" ha tirado dados");
+                                    dialogDiceThrow.setMessage("Dado 1: "+number+"\nDado 2: "+number2);
+                                    dialogDiceThrow.addButton("OK");
+                                    dialogDiceThrow.build().show();
+                                    dialogDiceThrow.setClickListener(new ButtonClickListener() {
+                                        @Override
+                                        public void click(int button) {
+                                            players.get(aiPlayer).playerMovement((number+number2), 0.5f, false);
+                                            landingSituations(players.get(aiPlayer));
+                                        }
+                                    });
+                                }
+                            });
+                        } else { // 3º Option
+                            GDXButtonDialog dialogDiceThrow = dialogs.newDialog(GDXButtonDialog.class);
+                            dialogDiceThrow.setTitle(players.get(aiPlayer).getName()+" ha tirado dados");
+                            dialogDiceThrow.setMessage("Dado 1: "+number+"\nDado 2: "+number2);
+                            dialogDiceThrow.addButton("OK");
+                            dialogDiceThrow.build().show();
+                            dialogDiceThrow.setClickListener(new ButtonClickListener() {
+                                @Override
+                                public void click(int button) {
+                                    if (number==number2) {
+                                        GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
+                                        bDialog.setTitle(players.get(aiPlayer).getName()+" ha salido de la cárcel");
+                                        bDialog.setMessage(players.get(aiPlayer).getName()+" ha salido de la cárcel tirando dobles");
+                                        players.get(aiPlayer).playerMovement((number+number2), 0.5f, false);
+                                        landingSituations(players.get(aiPlayer));
+                                    }
+                                }
+                            });
+                        }
                     }
                 }
                 diceButton.setVisible(true);
@@ -275,7 +359,7 @@ public abstract class BaseScreen implements Screen {
         chestButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                playablePlayers.get(0).communityChestCase(communityChest, dialogs);
+                players.get(0).communityChestCase(communityChest, dialogs);
                 chestButton.setVisible(false);
                 endButton.setVisible(true);
             }
@@ -284,8 +368,16 @@ public abstract class BaseScreen implements Screen {
         chanceButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                playablePlayers.get(0).chanceCase(playablePlayers.get(0), chance, dialogs);
+                players.get(0).chanceCase(players.get(0), chance, dialogs);
                 chanceButton.setVisible(false);
+                endButton.setVisible(true);
+            }
+        });
+
+        saveButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // TODO Save game to database
             }
         });
 
@@ -329,16 +421,16 @@ public abstract class BaseScreen implements Screen {
                             public void click(int button) {
                                 boolean ownerPaid=false;
                                 boolean playerPaid=false;
-                                for (int i=0; i<playablePlayers.size(); i++) {
+                                for (int i=0; i<players.size(); i++) {
                                     if (!ownerPaid) {
-                                        if (playablePlayers.get(i).equals(prop.getOwner())) {
-                                            playablePlayers.get(i).setMoney(playablePlayers.get(i).getMoney()+prop.getRentPrice());
+                                        if (players.get(i).equals(prop.getOwner())) {
+                                            players.get(i).setMoney(players.get(i).getMoney()+prop.getRentPrice());
                                             ownerPaid=true;
                                         }
                                     }
                                     if (!playerPaid) {
-                                        if (playablePlayers.get(i).equals(p)) {
-                                            playablePlayers.get(i).setMoney(playablePlayers.get(i).getMoney()-prop.getRentPrice());
+                                        if (players.get(i).equals(p)) {
+                                            players.get(i).setMoney(players.get(i).getMoney()-prop.getRentPrice());
                                             playerPaid=true;
                                         }
                                     }
@@ -443,6 +535,19 @@ public abstract class BaseScreen implements Screen {
         screen.getBatch().end();
         screen.act(delta);
         screen.draw();
+        spriteBatch.begin();
+        for (int i=0; i<players.size(); i++) {
+            if (i==0) {
+                fontText.draw(spriteBatch, "Nombre: "+players.get(i).getName()+"\n " +
+                        "Figura: "+players.get(i).getSelectedPiece()+"\n" +
+                        "Dinero: "+players.get(i).getMoney()+"€", Gdx.graphics.getWidth()/1.3257f, Gdx.graphics.getHeight()/1.038f);
+            } else {
+                fontText.draw(spriteBatch, "Nombre: "+players.get(i).getName()+"\n " +
+                        "Figura: "+players.get(i).getSelectedPiece()+"\n" +
+                        "Dinero: "+players.get(i).getMoney()+"€", Gdx.graphics.getWidth()/1.3257f, Gdx.graphics.getHeight()/1.038f-(Gdx.graphics.getHeight()/4.32f)*i);
+            }
+        }
+        spriteBatch.end();
     }
 
     @Override

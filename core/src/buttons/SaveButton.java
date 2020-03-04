@@ -4,13 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-public class MortgageButton extends Actor {
+public class SaveButton extends Actor {
     private Sprite sprite;
 
-    public MortgageButton(float x, float y) {
-        sprite=new Sprite(new Texture("buttons/mortgage_button.png"));
+    public SaveButton(float x, float y) {
+        sprite=new Sprite(new Texture("buttons/save_button.png"));
         sprite.setBounds(x, y, Gdx.graphics.getWidth()/6f, Gdx.graphics.getHeight()/15f);
         this.setPosition(x, y);
         this.setSize(Gdx.graphics.getWidth()/6f,Gdx.graphics.getHeight()/15f);

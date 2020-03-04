@@ -63,7 +63,6 @@ class NewGameActivity : AppCompatActivity() {
      */
     fun startGame(view: View) {
         val newGame=Intent(this, AndroidLauncher::class.java)
-        var bundle=Bundle()
         newGame.putExtra("arrayPlayers", arrayPlayers)
         startActivity(newGame)
     }

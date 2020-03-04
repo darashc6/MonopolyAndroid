@@ -36,35 +36,35 @@ class CustomAdapter(context: Context, var arrayPlayers: ArrayList<Player>): Arra
                 when(spinnerPieces.selectedItem as String) {
                     "Barco" -> {
                         imagePiece.setImageResource(context.resources.getIdentifier("barco", "drawable", context.packageName))
-                        arrayPlayers[arrayPosition].selectedPiece="barco"
+                        arrayPlayers[arrayPosition].selectedPiece="Barco"
                     }
                     "Caballo" -> {
                         imagePiece.setImageResource(context.resources.getIdentifier("caballo", "drawable", context.packageName))
-                        arrayPlayers[arrayPosition].selectedPiece="caballo"
+                        arrayPlayers[arrayPosition].selectedPiece="Caballo"
                     }
                     "Carretilla" -> {
                         imagePiece.setImageResource(context.resources.getIdentifier("carretilla", "drawable", context.packageName))
-                        arrayPlayers[arrayPosition].selectedPiece="carretilla"
+                        arrayPlayers[arrayPosition].selectedPiece="Carretilla"
                     }
                     "Coche" -> {
                         imagePiece.setImageResource(context.resources.getIdentifier("coche", "drawable", context.packageName))
-                        arrayPlayers[arrayPosition].selectedPiece="coche"
+                        arrayPlayers[arrayPosition].selectedPiece="Coche"
                     }
                     "Dedal" -> {
                         imagePiece.setImageResource(context.resources.getIdentifier("dedal", "drawable", context.packageName))
-                        arrayPlayers[arrayPosition].selectedPiece="dedal"
+                        arrayPlayers[arrayPosition].selectedPiece="Dedal"
                     }
                     "Gorra" -> {
                         imagePiece.setImageResource(context.resources.getIdentifier("gorra", "drawable", context.packageName))
-                        arrayPlayers[arrayPosition].selectedPiece="gorra"
+                        arrayPlayers[arrayPosition].selectedPiece="Gorra"
                     }
                     "Guerrero" -> {
                         imagePiece.setImageResource(context.resources.getIdentifier("guerrero", "drawable", context.packageName))
-                        arrayPlayers[arrayPosition].selectedPiece="guerrero"
+                        arrayPlayers[arrayPosition].selectedPiece="Guerrero"
                     }
                     "Zapato" -> {
                         imagePiece.setImageResource(context.resources.getIdentifier("zapato", "drawable", context.packageName))
-                        arrayPlayers[arrayPosition].selectedPiece="zapato"
+                        arrayPlayers[arrayPosition].selectedPiece="Zapato"
                     }
                 }
             }
