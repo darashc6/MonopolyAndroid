@@ -16,6 +16,11 @@ import com.darash.monopoly.MyGame;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
+
+import javax.xml.crypto.Data;
+
 import buttons.AuctionButton;
 import buttons.BuyButton;
 import buttons.ChanceButton;
@@ -29,9 +34,11 @@ import buttons.UnmortgageButton;
 import classes.Player;
 import classes.Property;
 import classes.Square;
+import database.Database;
 import de.tomgrill.gdxdialogs.core.GDXDialogs;
 import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
 import de.tomgrill.gdxdialogs.core.dialogs.GDXButtonDialog;
+import de.tomgrill.gdxdialogs.core.dialogs.GDXProgressDialog;
 import de.tomgrill.gdxdialogs.core.listener.ButtonClickListener;
 import listeners.StageListener;
 
@@ -56,10 +63,12 @@ public abstract class BaseScreen implements Screen {
     private static ChanceButton chanceButton;
     private static EndTurnButton endButton;
     private BitmapFont fontText;
+    private Database monopolyDatabase;
 
-    protected BaseScreen(MyGame mg, ArrayList<Player> arrayPlayers) {
+    protected BaseScreen(MyGame mg, ArrayList<Player> arrayPlayers, Database db) {
         Gdx.app.log("Dimensiones", Gdx.graphics.getHeight()+", "+Gdx.graphics.getWidth());
         this.game = mg;
+        this.monopolyDatabase=db;
         board=Square.initSquares();
         communityChest=Square.initCommunityChest();
         chance=Square.initChance();
@@ -377,7 +386,12 @@ public abstract class BaseScreen implements Screen {
         saveButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // TODO Save game to database
+                // monopolyDatabase.saveGame(players, board);
+                final GDXProgressDialog progressDialog = dialogs.newDialog(GDXProgressDialog.class);
+
+                progressDialog.setTitle("Download");
+                progressDialog.setMessage("Loading new level from server...");
+                progressDialog.build().show();
             }
         });
 

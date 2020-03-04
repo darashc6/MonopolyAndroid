@@ -29,8 +29,6 @@ public class Player extends Actor implements Serializable {
     private String selectedPiece; // Name of the selected piece by the player
     private int money; // Amount of money the player has
     private ArrayList<Property> propertiesBought; // Properties bought by the player
-    private ArrayList<Property> propertiesMortgaged; // Properties mortgaged by the player
-    private ArrayList<Property> propertiesRedeemable; // Properties that can be paid off
     private boolean isBankrupt; // Checks if the player is bankrupt
     private boolean isInJail; // Checks if the player is in jail
     private int nGetOutOfJailFreeCards; // Number of 'Get out of jail free' Cards the player has
@@ -47,8 +45,6 @@ public class Player extends Actor implements Serializable {
         this.boardPosition = 0;
         this.money = 2000;
         this.propertiesBought = new ArrayList<Property>();
-        this.propertiesMortgaged = new ArrayList<Property>();
-        this.propertiesRedeemable = new ArrayList<Property>();
         this.isBankrupt = false;
         this.isInJail = false;
         this.nGetOutOfJailFreeCards = 0;
@@ -60,8 +56,6 @@ public class Player extends Actor implements Serializable {
         this.selectedPiece=piece;
         this.money = 2000;
         this.propertiesBought = new ArrayList<Property>();
-        this.propertiesMortgaged = new ArrayList<Property>();
-        this.propertiesRedeemable = new ArrayList<Property>();
         this.isBankrupt = false;
         this.isInJail = false;
         this.nGetOutOfJailFreeCards = 0;
@@ -72,6 +66,17 @@ public class Player extends Actor implements Serializable {
         this.setSize(Gdx.graphics.getWidth()/25f,Gdx.graphics.getHeight()/25f);
         this.setOrigin(x, y);
         sprite.setOrigin(this.getOriginX(),this.getOriginY());
+    }
+
+    public Player(String name, String piece, int position, int money, boolean bankrupt, boolean jail, int cards) {
+        this.name = name;
+        this.selectedPiece=piece;
+        this.boardPosition = position;
+        this.money = money;
+        this.propertiesBought = new ArrayList<Property>();
+        this.isBankrupt = bankrupt;
+        this.isInJail = jail;
+        this.nGetOutOfJailFreeCards = cards;
     }
 
     // Start of getters and setters of Player
@@ -113,22 +118,6 @@ public class Player extends Actor implements Serializable {
 
     public void setPropertiesBought(ArrayList<Property> propertiesBought) {
         this.propertiesBought = propertiesBought;
-    }
-
-    public ArrayList<Property> getPropertiesMortgaged() {
-        return propertiesMortgaged;
-    }
-
-    public void setPropertiesMortgaged(ArrayList<Property> propertiesMortgaged) {
-        this.propertiesMortgaged = propertiesMortgaged;
-    }
-
-    public ArrayList<Property> getPropertiesRedeemable() {
-        return propertiesRedeemable;
-    }
-
-    public void setPropertiesRedeemable(ArrayList<Property> propertiesRedeemable) {
-        this.propertiesRedeemable = propertiesRedeemable;
     }
 
     public boolean isBankrupt() {
@@ -439,8 +428,6 @@ public class Player extends Actor implements Serializable {
                 ", boardPosition=" + boardPosition +
                 ", money=" + money +
                 ", propertiesBought=" + propertiesBought +
-                ", propertiesMortgaged=" + propertiesMortgaged +
-                ", propertiesRedeemable=" + propertiesRedeemable +
                 ", isBankrupt=" + isBankrupt +
                 ", isInJail=" + isInJail +
                 ", nGetOutOfJailFreeCards=" + nGetOutOfJailFreeCards +

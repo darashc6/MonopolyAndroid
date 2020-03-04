@@ -6,6 +6,7 @@ import com.darash.monopoly.MyGame;
 import java.util.ArrayList;
 
 import classes.Player;
+import database.Database;
 
 public class Board extends BaseScreen {
 
@@ -14,8 +15,8 @@ public class Board extends BaseScreen {
      * Here we add the image of the board to the game
      * @param mg Game
      */
-    public Board(MyGame mg, ArrayList<Player> players) {
-        super(mg, players);
+    public Board(MyGame mg, ArrayList<Player> players, Database db) {
+        super(mg, players, db);
         this.background=new Texture("board/correct_board.PNG");
     }
 }

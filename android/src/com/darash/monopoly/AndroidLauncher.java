@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import Constants.Functions;
 import classes.Player;
+import database.AndroidDatabase;
 
 /**
  * Class that launches the game
@@ -25,7 +26,7 @@ public class AndroidLauncher extends AndroidApplication {
         super.onCreate(savedInstanceState);
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
         ArrayList<Player> arrayListPlayers=(ArrayList<Player>) getIntent().getSerializableExtra("arrayPlayers");
-        initialize(new MyGame(arrayListPlayers), config);
+        initialize(new MyGame(arrayListPlayers, new AndroidDatabase(this)), config);
     }
 
     @Override

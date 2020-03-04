@@ -12,7 +12,6 @@ import com.darash.monopoly.R
  * Class where all the constant functions are stored
  */
 class Functions {
-
     companion object {
 
         /**

@@ -10,20 +10,23 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import java.util.ArrayList;
 
 import classes.Player;
+import database.Database;
 import screens.BaseScreen;
 import screens.Board;
 
 public class MyGame extends Game {
 	private BaseScreen currentScreen;
 	private ArrayList<Player> arrayPlayers;
+	private Database databaseMonopoly;
 
-	public MyGame(ArrayList<Player> players) {
+	public MyGame(ArrayList<Player> players, Database db) {
 		this.arrayPlayers=players;
+		this.databaseMonopoly=db;
 	}
 
 	@Override
 	public void create () {
-		this.setCurrentScreen(new Board(this, arrayPlayers));
+		this.setCurrentScreen(new Board(this, arrayPlayers, databaseMonopoly));
 	}
 
 	@Override
