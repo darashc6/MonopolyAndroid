@@ -116,7 +116,7 @@ public abstract class BaseScreen implements Screen {
         chestButton.setVisible(false);
         chanceButton.setVisible(false);
         endButton.setVisible(false);
-        saveButton.setVisible(true);
+        saveButton.setVisible(false);
 
         for (int i=0; i<arrayPlayers.size(); i++) {
             players.add(new Player(arrayPlayers.get(i).getName(), arrayPlayers.get(i).getSelectedPiece(),
@@ -269,7 +269,7 @@ public abstract class BaseScreen implements Screen {
         endButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // TODO AI Function here
+                // TODO AI Function here, ask Miguel about the order of the execution when there is more tham 2 players (more than 1 AI Player)
                 endButton.setVisible(false);
                 for (int i=1; i<players.size(); i++) {
                     final int aiPlayer=i;
@@ -379,19 +379,22 @@ public abstract class BaseScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 players.get(0).chanceCase(players.get(0), chance, dialogs);
                 chanceButton.setVisible(false);
-                endButton.setVisible(true);
+                if (board[players.get(0).getBoardPosition()].getType()!=Square.SquareType.CITY&&board[players.get(0).getBoardPosition()].getType()!=Square.SquareType.STATION) {
+                    endButton.setVisible(true);
+                }
             }
         });
 
         saveButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // monopolyDatabase.saveGame(players, board);
-                final GDXProgressDialog progressDialog = dialogs.newDialog(GDXProgressDialog.class);
-
-                progressDialog.setTitle("Download");
-                progressDialog.setMessage("Loading new level from server...");
-                progressDialog.build().show();
+                // TODO Download 'DB Browser for SQLite' to check functionality
+                monopolyDatabase.saveGame(players, board);
+                GDXButtonDialog dialogDiceThrow = dialogs.newDialog(GDXButtonDialog.class);
+                dialogDiceThrow.setTitle("Partida guardada");
+                dialogDiceThrow.setMessage("Se ha guardado la partida");
+                dialogDiceThrow.addButton("OK");
+                dialogDiceThrow.build().show();
             }
         });
 

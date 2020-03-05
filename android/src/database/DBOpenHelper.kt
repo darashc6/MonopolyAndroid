@@ -14,7 +14,7 @@ class DBOpenHelper(var context: Context, var version: Int): SQLiteOpenHelper(con
                 "isBankrupt INT(1) DEFAULT 0," +
                 "cards INT(2))")
         db.execSQL("CREATE TABLE propertiesMonopoly(position INT(2) PRIMARY KEY," +
-                "ownerName TEXT))")
+                "ownerName TEXT)")
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {

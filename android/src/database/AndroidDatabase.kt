@@ -90,7 +90,11 @@ class AndroidDatabase(var context: Context) : Database {
         for (sq in board) {
             if (sq.type == Square.SquareType.CITY || sq.type == Square.SquareType.STATION) {
                 cv.put("position", sq.property.boardPosition)
-                cv.put("ownerName", sq.property.owner.name)
+                if (sq.property.owner==null) {
+                    cv.put("ownerName", "null")
+                } else {
+                    cv.put("ownerName", sq.property.owner.name)
+                }
                 db.insert(PROPERTIES_TABLE_NAME, null, cv)
                 cv.clear()
             }
