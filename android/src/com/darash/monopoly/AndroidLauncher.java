@@ -25,7 +25,11 @@ public class AndroidLauncher extends AndroidApplication {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-        ArrayList<Player> arrayListPlayers=(ArrayList<Player>) getIntent().getSerializableExtra("arrayPlayers");
+        ArrayList<Player> arrayListPlayers=new ArrayList<>();
+        boolean previousGame=getIntent().getBooleanExtra("previousGame", false);
+        if (!previousGame) {
+            arrayListPlayers=(ArrayList<Player>) getIntent().getSerializableExtra("arrayPlayers");
+        }
         initialize(new MyGame(arrayListPlayers, new AndroidDatabase(this)), config);
     }
 

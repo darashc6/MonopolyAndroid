@@ -24,7 +24,7 @@ class NewGameActivity : AppCompatActivity() {
         adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerNumberPlayers.adapter=adapterSpinner
 
-        var adapterFiguras=CustomAdapter(this, arrayPlayers)
+        val adapterFiguras=CustomAdapter(this, arrayPlayers)
         layoutPieceSelection.adapter=adapterFiguras
 
         spinnerNumberPlayers.onItemSelectedListener=(object : AdapterView.OnItemSelectedListener {
@@ -64,6 +64,7 @@ class NewGameActivity : AppCompatActivity() {
     fun startGame(view: View) {
         val newGame=Intent(this, AndroidLauncher::class.java)
         newGame.putExtra("arrayPlayers", arrayPlayers)
+        newGame.putExtra("previousGame", false)
         startActivity(newGame)
     }
 }

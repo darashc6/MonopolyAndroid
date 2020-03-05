@@ -39,6 +39,7 @@
         android:layout_marginTop="25dp"
         android:layout_marginRight="100dp"
         android:layout_marginLeft="100dp"
+        android:onClick="loadPreviousGame"
         android:text="@string/button_load_game"
         app:layout_constraintTop_toBottomOf="@+id/button_new_game"
         tools:layout_editor_absoluteX="26dp" />

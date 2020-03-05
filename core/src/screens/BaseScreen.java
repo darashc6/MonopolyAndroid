@@ -13,8 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.darash.monopoly.MyGame;
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
@@ -39,7 +39,9 @@ import de.tomgrill.gdxdialogs.core.GDXDialogs;
 import de.tomgrill.gdxdialogs.core.GDXDialogsSystem;
 import de.tomgrill.gdxdialogs.core.dialogs.GDXButtonDialog;
 import de.tomgrill.gdxdialogs.core.dialogs.GDXProgressDialog;
+import de.tomgrill.gdxdialogs.core.dialogs.GDXTextPrompt;
 import de.tomgrill.gdxdialogs.core.listener.ButtonClickListener;
+import de.tomgrill.gdxdialogs.core.listener.TextPromptListener;
 import listeners.StageListener;
 
 public abstract class BaseScreen implements Screen {
@@ -67,6 +69,7 @@ public abstract class BaseScreen implements Screen {
 
     protected BaseScreen(MyGame mg, ArrayList<Player> arrayPlayers, Database db) {
         Gdx.app.log("Dimensiones", Gdx.graphics.getHeight()+", "+Gdx.graphics.getWidth());
+        Gdx.app.log("Size", arrayPlayers.size()+"");
         this.game = mg;
         this.monopolyDatabase=db;
         board=Square.initSquares();
@@ -118,10 +121,25 @@ public abstract class BaseScreen implements Screen {
         endButton.setVisible(false);
         saveButton.setVisible(false);
 
-        for (int i=0; i<arrayPlayers.size(); i++) {
-            players.add(new Player(arrayPlayers.get(i).getName(), arrayPlayers.get(i).getSelectedPiece(),
-                    Gdx.graphics.getWidth()/1.6704f, Gdx.graphics.getHeight()/6.75f));
-            screen.addActor(players.get(i));
+        if (!arrayPlayers.isEmpty()) {
+            for (int i=0; i<arrayPlayers.size(); i++) {
+                players.add(new Player(arrayPlayers.get(i).getName(), arrayPlayers.get(i).getSelectedPiece(),
+                        Gdx.graphics.getWidth()/1.6704f, Gdx.graphics.getHeight()/6.75f));
+                screen.addActor(players.get(i));
+            }
+        } else {
+            arrayPlayers=db.loadGame(board);
+            for (int i=0; i<arrayPlayers.size(); i++) {
+                players.add(new Player(arrayPlayers.get(i).getName(), arrayPlayers.get(i).getSelectedPiece(),
+                        Gdx.graphics.getWidth()/1.6704f, Gdx.graphics.getHeight()/6.75f));
+                players.get(i).setMoney(arrayPlayers.get(i).getMoney());
+                players.get(i).setInJail(arrayPlayers.get(i).isInJail());
+                players.get(i).setBankrupt(arrayPlayers.get(i).isBankrupt());
+                players.get(i).setnGetOutOfJailFreeCards(arrayPlayers.get(i).getnGetOutOfJailFreeCards());
+                players.get(i).setPropertiesBought(arrayPlayers.get(i).getPropertiesBought());
+                players.get(i).playerMovement(arrayPlayers.get(i).getBoardPosition(), 0f, false);
+                screen.addActor(players.get(i));
+            }
         }
 
         startButton.addListener(new ClickListener() {
@@ -138,19 +156,73 @@ public abstract class BaseScreen implements Screen {
         auctionButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
-                bDialog.setTitle("Buy a item");
-                bDialog.setMessage("Do you want to buy the mozarella?");
+                final GDXTextPrompt textPrompt = dialogs.newDialog(GDXTextPrompt.class);
+                final Property property=board[players.get(0).getBoardPosition()].getProperty();
 
-                bDialog.setClickListener(new ButtonClickListener() {
+                textPrompt.setTitle("Subasta");
+                textPrompt.setMessage("Escriba su puja máxima de la propiedad\n" +
+                        "Propiedad: "+property.getName()+"\n" +
+                        "Valor: "+property.getValue()+"€");
+                textPrompt.setConfirmButtonLabel("Pujar");
+
+                textPrompt.setTextPromptListener(new TextPromptListener() {
                     @Override
-                    public void click(int button) {
-                        // TODO Auction Dialog
+                    public void confirm(String text) {
+                        try {
+                            final int inputValue=Integer.parseInt(text);
+                            if (inputValue<players.get(0).getMoney()) {
+                                Random r=new Random();
+                                ArrayList<Integer> listBets=new ArrayList<>();
+                                listBets.add(Integer.parseInt(text));
+                                for (int i=0; i<players.size()-1; i++) {
+                                    listBets.add(r.nextInt(100)+property.getValue());
+                                }
+                                int maxBet=Collections.max(listBets);
+                                final int nPlayer=listBets.indexOf(maxBet);
+
+                                GDXButtonDialog endAuctionDialog=dialogs.newDialog(GDXButtonDialog.class);
+                                endAuctionDialog.setTitle("Subasta");
+                                endAuctionDialog.setMessage("La puja máxima fue de "+maxBet+"€, realizado por "+players.get(nPlayer).getName());
+
+                                endAuctionDialog.addButton("OK");
+
+                                endAuctionDialog.setClickListener(new ButtonClickListener() {
+                                    @Override
+                                    public void click(int button) {
+                                        board[players.get(nPlayer).getBoardPosition()].getProperty().setOwner(players.get(nPlayer));
+                                        players.get(nPlayer).getPropertiesBought().add(board[players.get(nPlayer).getBoardPosition()].getProperty());
+                                        players.get(nPlayer).setMoney(players.get(nPlayer).getMoney()-inputValue);
+                                        buyButton.setVisible(false);
+                                        auctionButton.setVisible(false);
+                                        endButton.setVisible(true);
+                                    }
+                                });
+
+                                endAuctionDialog.build().show();
+                            } else {
+                                GDXButtonDialog errorDialog=dialogs.newDialog(GDXButtonDialog.class);
+                                errorDialog.setTitle("Error");
+                                errorDialog.setMessage("El valor introducido es mayor a la cantidad de dinero que dispone. Introduzca un valor válido.");
+
+                                errorDialog.addButton("OK");
+                                errorDialog.build().show();
+                            }
+                        } catch (NumberFormatException ex) {
+                            GDXButtonDialog errorDialog=dialogs.newDialog(GDXButtonDialog.class);
+                            errorDialog.setTitle("Error");
+                            errorDialog.setMessage("Ha introducido un valor inválido. Por favor, intente de nuevo");
+
+                            errorDialog.addButton("OK");
+                            errorDialog.build().show();
+                        }
+                    }
+
+                    @Override
+                    public void cancel() {
                     }
                 });
 
-                bDialog.addButton("OK");
-                bDialog.build().show();
+                textPrompt.build().show();
             }
         });
 
@@ -317,6 +389,7 @@ public abstract class BaseScreen implements Screen {
                                     });
                                 }
                             });
+                            bDialog.build().show();
                         } else if (players.get(aiPlayer).getMoney()>=50) { // 2º Option
                             players.get(aiPlayer).setMoney(players.get(aiPlayer).getMoney()-50);
                             GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
@@ -340,6 +413,7 @@ public abstract class BaseScreen implements Screen {
                                     });
                                 }
                             });
+                            bDialog.build().show();
                         } else { // 3º Option
                             GDXButtonDialog dialogDiceThrow = dialogs.newDialog(GDXButtonDialog.class);
                             dialogDiceThrow.setTitle(players.get(aiPlayer).getName()+" ha tirado dados");
@@ -358,6 +432,7 @@ public abstract class BaseScreen implements Screen {
                                     }
                                 }
                             });
+                            dialogDiceThrow.build().show();
                         }
                     }
                 }
@@ -379,7 +454,9 @@ public abstract class BaseScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 players.get(0).chanceCase(players.get(0), chance, dialogs);
                 chanceButton.setVisible(false);
-                if (board[players.get(0).getBoardPosition()].getType()!=Square.SquareType.CITY&&board[players.get(0).getBoardPosition()].getType()!=Square.SquareType.STATION) {
+                if (board[players.get(0).getBoardPosition()].getType()==Square.SquareType.CITY||board[players.get(0).getBoardPosition()].getType()==Square.SquareType.STATION) {
+                    endButton.setVisible(false);
+                } else {
                     endButton.setVisible(true);
                 }
             }
@@ -430,7 +507,7 @@ public abstract class BaseScreen implements Screen {
                     if (!prop.getOwner().equals(p)) { // If the property isn't owned by the same player throwing the dice
                         GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
                         bDialog.setTitle("Pagar Renta");
-                        bDialog.setMessage(p.getName()+" es el dueño de "+prop.getName()+". " +
+                        bDialog.setMessage(prop.getOwner().getName()+" es el dueño de "+prop.getName()+". " +
                                 "Deberá pagar la renta de la propiedad: "+prop.getRentPrice()+"€");
                         bDialog.addButton("OK");
                         bDialog.setClickListener(new ButtonClickListener() {

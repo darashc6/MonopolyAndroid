@@ -12,6 +12,7 @@ class AndroidDatabase(var context: Context) : Database {
     companion object {
         const val PLAYERS_TABLE_NAME = "playersMonopoly"
         const val PROPERTIES_TABLE_NAME = "propertiesMonopoly"
+        const val SAVED_MATCH_TABLE_NAME = "matchSaved"
     }
 
     override fun loadGame(board: Array<Square>): ArrayList<Player> {
@@ -46,6 +47,7 @@ class AndroidDatabase(var context: Context) : Database {
 
                 if (player.name==ownerName) {
                     player.propertiesBought.add(board[boardPosition].property)
+                    board[boardPosition].property.owner=player
                 }
             }
             cursorProperties.moveToPosition(-1)
@@ -57,12 +59,36 @@ class AndroidDatabase(var context: Context) : Database {
         return players
     }
 
+    override fun checkSavedGame(): Boolean {
+        var isGameSaved = false
+        val db=openHelper.writableDatabase
+        val cursorMatchSaved: Cursor=db.query(SAVED_MATCH_TABLE_NAME, null, null, null, null, null, null)
+
+        if (cursorMatchSaved.moveToNext()) {
+            if (cursorMatchSaved.getInt(cursorMatchSaved.getColumnIndex("saved"))==1) {
+                isGameSaved=true
+            }
+        }
+        cursorMatchSaved.close()
+
+        return isGameSaved
+    }
+
+    override fun deleteMatch() {
+        val db=openHelper.writableDatabase
+        db.delete(PLAYERS_TABLE_NAME, null, null)
+        db.delete(PROPERTIES_TABLE_NAME, null, null)
+        db.delete(SAVED_MATCH_TABLE_NAME, null, null)
+    }
+
     override fun saveGame(players: ArrayList<Player>, board: Array<Square>) {
         val db=openHelper.writableDatabase
         db.delete(PLAYERS_TABLE_NAME, null, null)
         db.delete(PROPERTIES_TABLE_NAME, null, null)
+        db.delete(SAVED_MATCH_TABLE_NAME, null, null)
         val cursorPlayers: Cursor=db.query(PLAYERS_TABLE_NAME, null, null, null, null, null, null, null)
         val cursorProperties: Cursor=db.query(PROPERTIES_TABLE_NAME, null, null, null, null, null, null, null)
+        val cursorMatchSaved: Cursor=db.query(SAVED_MATCH_TABLE_NAME, null, null, null, null, null, null, null)
         val cv=ContentValues()
 
         for (p in players) {
@@ -100,6 +126,11 @@ class AndroidDatabase(var context: Context) : Database {
             }
         }
         cursorProperties.close()
+
+        cv.put("saved", 1)
+        db.insert(SAVED_MATCH_TABLE_NAME, null, cv)
+        cursorMatchSaved.close()
+
         db.close()
     }
 }

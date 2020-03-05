@@ -26,4 +26,12 @@
     <string name="exit_application_positive">Si</string>
     <string name="exit_application_negative_toast">Eres una persona maravillosa :). Le deseo lo mejor en el futuro.</string>
     <string name="exit_application_positive_toast">:(</string>
+
+    <string name="overwrite_game_title">¿Empezar desde cero?</string>
+    <string name="overwrite_game_message">¿Estás seguro de que quieres empezar de nuevo? Tienes una partida en progreso.</string>
+    <string name="overwrite_game_negative">Cancelar</string>
+    <string name="overwrite_game_positive">Continuar</string>
+    <string name="match_deleted_message">Partida borrada</string>
+
+    <string name="no_saved_match_message">No tienes niguna partida guardada</string>
 </resources>
