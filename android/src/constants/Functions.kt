@@ -1,4 +1,4 @@
-package Constants
+package constants
 
 import android.app.Activity
 import android.content.Context

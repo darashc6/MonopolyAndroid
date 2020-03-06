@@ -1,19 +1,13 @@
 package com.darash.monopoly;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AlertDialog;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.darash.monopoly.MyGame;
 
 import java.util.ArrayList;
 
-import Constants.Functions;
+import constants.Functions;
 import classes.Player;
 import database.AndroidDatabase;
 

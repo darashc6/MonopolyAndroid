@@ -1,5 +1,6 @@
 package screens;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -42,6 +43,7 @@ import de.tomgrill.gdxdialogs.core.dialogs.GDXProgressDialog;
 import de.tomgrill.gdxdialogs.core.dialogs.GDXTextPrompt;
 import de.tomgrill.gdxdialogs.core.listener.ButtonClickListener;
 import de.tomgrill.gdxdialogs.core.listener.TextPromptListener;
+import dialogs.GDXSpinnerDialog;
 import listeners.StageListener;
 
 public abstract class BaseScreen implements Screen {
@@ -70,6 +72,9 @@ public abstract class BaseScreen implements Screen {
     protected BaseScreen(MyGame mg, ArrayList<Player> arrayPlayers, Database db) {
         Gdx.app.log("Dimensiones", Gdx.graphics.getHeight()+", "+Gdx.graphics.getWidth());
         Gdx.app.log("Size", arrayPlayers.size()+"");
+        if(Gdx.app.getType() == Application.ApplicationType.Android) {
+            dialogs.registerDialog("package.for.your.dialog.interface.GDXButtonDialog", "package.for.your.dialog.os.specific.implementation.AndroidGDXButtonDialog");
+        }
         this.game = mg;
         this.monopolyDatabase=db;
         board=Square.initSquares();
@@ -223,6 +228,18 @@ public abstract class BaseScreen implements Screen {
                 });
 
                 textPrompt.build().show();
+            }
+        });
+
+        mortgageButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                GDXSpinnerDialog spinnerDialog=dialogs.newDialog(GDXSpinnerDialog.class);
+                spinnerDialog.setTitle("¿Esto funciona?");
+                spinnerDialog.setMessage("Timaina que esto funciona");
+                spinnerDialog.setOKButtonText("Jaja");
+
+                spinnerDialog.build().show();
             }
         });
 

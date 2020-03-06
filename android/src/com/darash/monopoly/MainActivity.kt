@@ -1,11 +1,9 @@
 package com.darash.monopoly
 
-import Constants.Functions
-import android.app.Activity
+import constants.Functions
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.text.BoringLayout
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
