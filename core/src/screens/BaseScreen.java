@@ -72,15 +72,15 @@ public abstract class BaseScreen implements Screen {
     protected BaseScreen(MyGame mg, ArrayList<Player> arrayPlayers, Database db) {
         Gdx.app.log("Dimensiones", Gdx.graphics.getHeight()+", "+Gdx.graphics.getWidth());
         Gdx.app.log("Size", arrayPlayers.size()+"");
+        dialogs = GDXDialogsSystem.install();
         if(Gdx.app.getType() == Application.ApplicationType.Android) {
-            dialogs.registerDialog("package.for.your.dialog.interface.GDXButtonDialog", "package.for.your.dialog.os.specific.implementation.AndroidGDXButtonDialog");
+            dialogs.registerDialog("dialogs.GDXSpinnerDialog", "dialog.AndroidDGXSpinnerDialog");
         }
         this.game = mg;
         this.monopolyDatabase=db;
         board=Square.initSquares();
         communityChest=Square.initCommunityChest();
         chance=Square.initChance();
-        dialogs = GDXDialogsSystem.install();
         screen = new Stage(new FillViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         startButton = new StartGameButton(Gdx.graphics.getWidth()/3.7963f, Gdx.graphics.getHeight()/2.16f);
         buyButton = new BuyButton(Gdx.graphics.getWidth()/4.64f, Gdx.graphics.getHeight()/2.16f);
@@ -235,16 +235,16 @@ public abstract class BaseScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 GDXSpinnerDialog spinnerDialog=dialogs.newDialog(GDXSpinnerDialog.class);
-                spinnerDialog.setTitle("¿Esto funciona?");
-                spinnerDialog.setMessage("Timaina que esto funciona");
-                spinnerDialog.setOKButtonText("Jaja");
+                spinnerDialog.setTitle("Hipotecar");
+                spinnerDialog.setMessage("Elija la propiedad que desea hipotecar");
+                spinnerDialog.setOKButtonText("OK");
+                spinnerDialog.setPropertyList(players.get(0).getPropertiesBought());
 
                 spinnerDialog.build().show();
             }
         });
 
 
-        Gdx.app.log("Dimensiones", Gdx.graphics.getWidth()+", "+Gdx.graphics.getHeight());
         diceButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

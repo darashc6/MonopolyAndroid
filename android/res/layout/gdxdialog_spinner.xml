@@ -11,6 +11,7 @@
         android:id="@+id/gdxDialogsEnterTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
         />
 
@@ -18,12 +19,17 @@
         android:id="@+id/gdxDialogsEnterMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Spinner
         android:id="@+id/gdxDialogSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="75dp"
+        android:layout_marginEnd="75dp"
+        />
 
 
 </LinearLayout>

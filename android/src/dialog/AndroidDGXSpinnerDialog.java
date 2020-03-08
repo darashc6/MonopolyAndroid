@@ -5,12 +5,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.darash.monopoly.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import classes.Property;
 import dialogs.GDXSpinnerDialog;
@@ -22,6 +25,8 @@ public class AndroidDGXSpinnerDialog implements GDXSpinnerDialog {
     private String title="";
     private String message="";
     private String okLabel="";
+    private Spinner spinner;
+    private ArrayAdapter<String> adapterSpinner;
     private AlertDialog alertDialog;
     private boolean isBuild = false;
 
@@ -43,7 +48,14 @@ public class AndroidDGXSpinnerDialog implements GDXSpinnerDialog {
 
     @Override
     public GDXSpinnerDialog setPropertyList(ArrayList<Property> list) {
-        return null;
+        String[] arrayProperties=new String[list.size()];
+        for (int i=0; i<list.size(); i++) {
+            arrayProperties[i]=list.get(i).getName();
+        }
+
+        adapterSpinner=new ArrayAdapter<>(activity, android.R.layout.simple_spinner_item, arrayProperties);
+        adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        return this;
     }
 
     @Override
@@ -63,13 +75,16 @@ public class AndroidDGXSpinnerDialog implements GDXSpinnerDialog {
 
                 titleView=view.findViewById(R.id.gdxDialogsEnterTitle);
                 messageView=view.findViewById(R.id.gdxDialogsEnterMessage);
+                spinner=view.findViewById(R.id.gdxDialogSpinner);
                 titleView.setText(title);
                 messageView.setText(message);
+                spinner.setAdapter(adapterSpinner);
 
                 builder.setCancelable(false);
                 builder.setPositiveButton(okLabel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        // TODO
                         Toast.makeText(activity, "Holaa", Toast.LENGTH_LONG).show();
                     }
                 });

@@ -37,7 +37,7 @@ class Functions {
                 }
             })
 
-            dialog.show()
+            dialog.create().show()
         }
     }
 }
