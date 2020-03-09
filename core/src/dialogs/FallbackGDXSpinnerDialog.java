@@ -16,13 +16,33 @@ public class FallbackGDXSpinnerDialog implements GDXSpinnerDialog {
     }
 
     @Override
-    public GDXSpinnerDialog setPropertyList(ArrayList<Property> list) {
+    public GDXSpinnerDialog setPropertyList(ArrayList<Property> list, boolean isMortgaging) {
         return this;
     }
 
     @Override
     public GDXSpinnerDialog setOKButtonText(String text) {
         return this;
+    }
+
+    @Override
+    public GDXSpinnerDialog setCancelButtonText(String text) {
+        return this;
+    }
+
+    @Override
+    public GDXSpinnerDialog setSpinnerDialogListener(SpinnerDialogListener listener) {
+        return this;
+    }
+
+    @Override
+    public String getSelectedItem() {
+        return "";
+    }
+
+    @Override
+    public int getSelectedPosition() {
+        return 0;
     }
 
     @Override

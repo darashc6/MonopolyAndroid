@@ -10,13 +10,16 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.badlogic.gdx.Gdx;
 import com.darash.monopoly.R;
 
 import java.util.ArrayList;
+import java.util.IllegalFormatCodePointException;
 import java.util.List;
 
 import classes.Property;
 import dialogs.GDXSpinnerDialog;
+import dialogs.SpinnerDialogListener;
 
 public class AndroidDGXSpinnerDialog implements GDXSpinnerDialog {
     private Activity activity;
@@ -25,7 +28,9 @@ public class AndroidDGXSpinnerDialog implements GDXSpinnerDialog {
     private String title="";
     private String message="";
     private String okLabel="";
+    private String cancelLabel="";
     private Spinner spinner;
+    private SpinnerDialogListener listener;
     private ArrayAdapter<String> adapterSpinner;
     private AlertDialog alertDialog;
     private boolean isBuild = false;
@@ -47,10 +52,16 @@ public class AndroidDGXSpinnerDialog implements GDXSpinnerDialog {
     }
 
     @Override
-    public GDXSpinnerDialog setPropertyList(ArrayList<Property> list) {
-        String[] arrayProperties=new String[list.size()];
-        for (int i=0; i<list.size(); i++) {
-            arrayProperties[i]=list.get(i).getName();
+    public GDXSpinnerDialog setPropertyList(ArrayList<Property> list, boolean isMortgaging) {
+        ArrayList<String> arrayProperties=new ArrayList<>();
+        if (isMortgaging) {
+            for (int i=0; i<list.size(); i++) {
+                arrayProperties.add(list.get(i).getName()+" - Valor: "+list.get(i).getMortgagePrice()+"€");
+            }
+        } else {
+            for (int i=0; i<list.size(); i++) {
+                arrayProperties.add(list.get(i).getName()+" - Valor: "+list.get(i).getRedeemPrice()+"€");
+            }
         }
 
         adapterSpinner=new ArrayAdapter<>(activity, android.R.layout.simple_spinner_item, arrayProperties);
@@ -62,6 +73,28 @@ public class AndroidDGXSpinnerDialog implements GDXSpinnerDialog {
     public GDXSpinnerDialog setOKButtonText(String text) {
         this.okLabel=text;
         return this;
+    }
+
+    @Override
+    public GDXSpinnerDialog setCancelButtonText(String text) {
+        this.cancelLabel=text;
+        return this;
+    }
+
+    @Override
+    public GDXSpinnerDialog setSpinnerDialogListener(SpinnerDialogListener listener) {
+        this.listener=listener;
+        return this;
+    }
+
+    @Override
+    public String getSelectedItem() {
+        return (String) spinner.getSelectedItem();
+    }
+
+    @Override
+    public int getSelectedPosition() {
+        return spinner.getSelectedItemPosition();
     }
 
     @Override
@@ -79,13 +112,34 @@ public class AndroidDGXSpinnerDialog implements GDXSpinnerDialog {
                 titleView.setText(title);
                 messageView.setText(message);
                 spinner.setAdapter(adapterSpinner);
-
                 builder.setCancelable(false);
+
                 builder.setPositiveButton(okLabel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // TODO
-                        Toast.makeText(activity, "Holaa", Toast.LENGTH_LONG).show();
+                        if (listener!=null) {
+                            Gdx.app.postRunnable(new Runnable() {
+                                @Override
+                                public void run() {
+                                    listener.confirm();
+                                }
+                            });
+                        }
+                    }
+                });
+
+                builder.setNegativeButton(cancelLabel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        alertDialog.cancel();
+                        if (listener!=null) {
+                            Gdx.app.postRunnable(new Runnable() {
+                                @Override
+                                public void run() {
+                                    listener.cancel();
+                                }
+                            });
+                        }
                     }
                 });
 

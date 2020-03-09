@@ -44,36 +44,43 @@ import de.tomgrill.gdxdialogs.core.dialogs.GDXTextPrompt;
 import de.tomgrill.gdxdialogs.core.listener.ButtonClickListener;
 import de.tomgrill.gdxdialogs.core.listener.TextPromptListener;
 import dialogs.GDXSpinnerDialog;
+import dialogs.SpinnerDialogListener;
 import listeners.StageListener;
 
 public abstract class BaseScreen implements Screen {
     protected MyGame game;
     protected Stage screen;
     protected Texture background;
-    private static GDXDialogs dialogs;
-    private static ArrayList<Player> players;
+    private static GDXDialogs dialogs; // Dialogs for the game
+    private static ArrayList<Player> players; // Players taking part in the gmae
     private SpriteBatch spriteBatch;
-    private static Square[] board;
-    private static String[] communityChest;
-    private static String[] chance;
-    private StartGameButton startButton;
-    private static BuyButton buyButton;
-    private static AuctionButton auctionButton;
-    private static ThrowDiceButton diceButton;
-    private MortgageButton mortgageButton;
-    private UnmortgageButton unmortgageButton;
-    private SaveButton saveButton;
-    private static CommunityChestButton chestButton;
-    private static ChanceButton chanceButton;
-    private static EndTurnButton endButton;
-    private BitmapFont fontText;
-    private Database monopolyDatabase;
+    private static Square[] board; // Board containing all the properties int the game
+    private static String[] communityChest; // All cases of community chest
+    private static String[] chance; // All cases of chance
+    private StartGameButton startButton; // Button for starting the game
+    private static BuyButton buyButton; // Button for buying a property
+    private static AuctionButton auctionButton; // Button for auctioning a property
+    private static ThrowDiceButton diceButton; // Button for throwing a dice
+    private MortgageButton mortgageButton; // Button for mortgaging a property
+    private UnmortgageButton unmortgageButton; // Button for unmortgaging a property
+    private SaveButton saveButton; // Button for saving the progress of the game
+    private static CommunityChestButton chestButton; // Button for the community chest case
+    private static ChanceButton chanceButton; // Button for the chance case
+    private static EndTurnButton endButton; // Button for ending the turn
+    private BitmapFont fontText; // Text displaying details of the player (Player name, Piece selected, money)
+    private Database monopolyDatabase; // Database where all the progress is saved
 
+    /**
+     * Main constructor of BaseScreen
+     * Here we initialize everything that contains the game
+     * @param mg Game
+     * @param arrayPlayers ArrayList of players taking part in the game
+     * @param db Database of the game
+     */
     protected BaseScreen(MyGame mg, ArrayList<Player> arrayPlayers, Database db) {
-        Gdx.app.log("Dimensiones", Gdx.graphics.getHeight()+", "+Gdx.graphics.getWidth());
-        Gdx.app.log("Size", arrayPlayers.size()+"");
         dialogs = GDXDialogsSystem.install();
         if(Gdx.app.getType() == Application.ApplicationType.Android) {
+            // To add our own customized AlertDialog in the game, we have to register our created dialog in dialogs
             dialogs.registerDialog("dialogs.GDXSpinnerDialog", "dialog.AndroidDGXSpinnerDialog");
         }
         this.game = mg;
@@ -102,7 +109,6 @@ public abstract class BaseScreen implements Screen {
         fontParameter.color = Color.BLACK;
         fontText = fontGenerator.generateFont(fontParameter);
 
-
         players=new ArrayList<>();
 
         screen.addActor(diceButton);
@@ -126,17 +132,19 @@ public abstract class BaseScreen implements Screen {
         endButton.setVisible(false);
         saveButton.setVisible(false);
 
+        // If the arrayPlayers pased by parameter is empty, we add the Players with it's default values
+        // This means that the user is staring a new game
         if (!arrayPlayers.isEmpty()) {
             for (int i=0; i<arrayPlayers.size(); i++) {
-                players.add(new Player(arrayPlayers.get(i).getName(), arrayPlayers.get(i).getSelectedPiece(),
-                        Gdx.graphics.getWidth()/1.6704f, Gdx.graphics.getHeight()/6.75f));
+                players.add(new Player(arrayPlayers.get(i), Gdx.graphics.getWidth()/1.6704f, Gdx.graphics.getHeight()/6.75f));
                 screen.addActor(players.get(i));
             }
         } else {
+            // If the arrayPlayers pased by parameter is not empty, we add the Players with values taken form the database
+            // This means that the user is restarting a previous game
             arrayPlayers=db.loadGame(board);
             for (int i=0; i<arrayPlayers.size(); i++) {
-                players.add(new Player(arrayPlayers.get(i).getName(), arrayPlayers.get(i).getSelectedPiece(),
-                        Gdx.graphics.getWidth()/1.6704f, Gdx.graphics.getHeight()/6.75f));
+                players.add(new Player(arrayPlayers.get(i), Gdx.graphics.getWidth()/1.6704f, Gdx.graphics.getHeight()/6.75f));
                 players.get(i).setMoney(arrayPlayers.get(i).getMoney());
                 players.get(i).setInJail(arrayPlayers.get(i).isInJail());
                 players.get(i).setBankrupt(arrayPlayers.get(i).isBankrupt());
@@ -147,6 +155,8 @@ public abstract class BaseScreen implements Screen {
             }
         }
 
+        // Button that starts the game
+        // Once it's clicked, it never shows up again (Unless the user is restarting a previous game)
         startButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -158,6 +168,9 @@ public abstract class BaseScreen implements Screen {
             }
         });
 
+        // Button where the user bids for a property.
+        // The user inputs a number on the dialog, while the AI generates a random number between the property value and property value+100
+        // The player with the highest bid ends up buying the property
         auctionButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -205,6 +218,7 @@ public abstract class BaseScreen implements Screen {
 
                                 endAuctionDialog.build().show();
                             } else {
+                                // If the user has written a number higher than his balance, A dialog error will be shown
                                 GDXButtonDialog errorDialog=dialogs.newDialog(GDXButtonDialog.class);
                                 errorDialog.setTitle("Error");
                                 errorDialog.setMessage("El valor introducido es mayor a la cantidad de dinero que dispone. Introduzca un valor válido.");
@@ -213,6 +227,7 @@ public abstract class BaseScreen implements Screen {
                                 errorDialog.build().show();
                             }
                         } catch (NumberFormatException ex) {
+                            // If the user has written something other than a number, a dalog error will be shown
                             GDXButtonDialog errorDialog=dialogs.newDialog(GDXButtonDialog.class);
                             errorDialog.setTitle("Error");
                             errorDialog.setMessage("Ha introducido un valor inválido. Por favor, intente de nuevo");
@@ -231,25 +246,99 @@ public abstract class BaseScreen implements Screen {
             }
         });
 
+        // Button where the user can mortgage his properties
+        // The user can mortgage his properties if the user is in needs of money in an instant
         mortgageButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                GDXSpinnerDialog spinnerDialog=dialogs.newDialog(GDXSpinnerDialog.class);
-                spinnerDialog.setTitle("Hipotecar");
-                spinnerDialog.setMessage("Elija la propiedad que desea hipotecar");
-                spinnerDialog.setOKButtonText("OK");
-                spinnerDialog.setPropertyList(players.get(0).getPropertiesBought());
+                // First, it will check if there are any properties that can be mortgaged
+                final ArrayList<Property> propertiesInUse=new ArrayList<>();
+                for (Property p: players.get(0).getPropertiesBought()) {
+                    if (!p.isMortgaged()) {
+                        propertiesInUse.add(p);
+                    }
+                }
 
-                spinnerDialog.build().show();
+                if (propertiesInUse.isEmpty()) { // If player doesn't have any properties mortgage-able
+                    GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
+                    bDialog.setTitle("Hipoteca");
+                    bDialog.setMessage("No dipsone de ningúna propiedad para hipotecar");
+                    bDialog.addButton("OK");
+                    bDialog.build().show();
+                } else { // If player has properties mortgage-able
+                    final GDXSpinnerDialog spinnerDialog=dialogs.newDialog(GDXSpinnerDialog.class);
+                    spinnerDialog.setTitle("Hipotecar");
+                    spinnerDialog.setMessage("Elija la propiedad que desea hipotecar");
+                    spinnerDialog.setOKButtonText("OK");
+                    spinnerDialog.setCancelButtonText("Cancelar");
+                    spinnerDialog.setPropertyList(propertiesInUse, true);
+                    spinnerDialog.setSpinnerDialogListener(new SpinnerDialogListener() {
+                        @Override
+                        public void confirm() {
+                            Property prop=propertiesInUse.get(spinnerDialog.getSelectedPosition());
+                            players.get(0).getPropertiesBought().get(players.get(0).getPropertiesBought().indexOf(prop)).setMortgaged(true);
+                            players.get(0).setMoney(players.get(0).getMoney()+prop.getMortgagePrice());
+                        }
+
+                        @Override
+                        public void cancel() {
+
+                        }
+                    });
+
+                    spinnerDialog.build().show();
+                }
             }
         });
 
+        unmortgageButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // First, it will check if there are any properties that can be mortgaged
+                final ArrayList<Property> propertiesMortgaged=new ArrayList<>();
+                for (Property p: players.get(0).getPropertiesBought()) {
+                    if (p.isMortgaged()) {
+                        propertiesMortgaged.add(p);
+                    }
+                }
 
+                if (propertiesMortgaged.isEmpty()) { // If player doesn't have any properties mortgage-able
+                    GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
+                    bDialog.setTitle("Hipoteca");
+                    bDialog.setMessage("No dipsone de ningúna propiedad para deshipotecar");
+                    bDialog.addButton("OK");
+                    bDialog.build().show();
+                } else { // If player has properties mortgage-able
+                    final GDXSpinnerDialog spinnerDialog=dialogs.newDialog(GDXSpinnerDialog.class);
+                    spinnerDialog.setTitle("Deshipotecar");
+                    spinnerDialog.setMessage("Elija la propiedad que desea deshipotecar");
+                    spinnerDialog.setOKButtonText("OK");
+                    spinnerDialog.setCancelButtonText("Cancelar");
+                    spinnerDialog.setPropertyList(propertiesMortgaged, false);
+                    spinnerDialog.setSpinnerDialogListener(new SpinnerDialogListener() {
+                        @Override
+                        public void confirm() {
+                            Property prop=propertiesMortgaged.get(spinnerDialog.getSelectedPosition());
+                            players.get(0).getPropertiesBought().get(players.get(0).getPropertiesBought().indexOf(prop)).setMortgaged(false);
+                            players.get(0).setMoney(players.get(0).getMoney()-prop.getRedeemPrice());
+                        }
+
+                        @Override
+                        public void cancel() {
+
+                        }
+                    });
+
+                    spinnerDialog.build().show();
+                }
+            }
+        });
+
+        // Button where the user throws a dice
+        // Once the dice is thrown, the player will advance to a certain position and depending on where it lands, it will do a specific thing
         diceButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("Jugador IA", players.get(1).getPropertiesBought()+"");
-                Gdx.app.log("Jugador IA", players.get(1)+"");
                 Random r = new Random();
                 final int number = r.nextInt(6) + 1;
                 final int number2 = r.nextInt(6) + 1;
@@ -263,7 +352,7 @@ public abstract class BaseScreen implements Screen {
                     bDialog.setClickListener(new ButtonClickListener() {
                         @Override
                         public void click(int button) {
-                            players.get(0).playerMovement((number+number2), 0.5f, false);
+                            players.get(0).playerMovement(number+number2, 0.5f, false);
                             landingSituations(players.get(0));
                         }
                     });
@@ -333,6 +422,7 @@ public abstract class BaseScreen implements Screen {
             }
         });
 
+        // Button where the player buys a property
         buyButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -355,17 +445,19 @@ public abstract class BaseScreen implements Screen {
             }
         });
 
+        // Button where the user ends his turn
+        // After the button is pressed, the AI will do the same functions (throwing dice, buying property, etc.)
         endButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // TODO AI Function here, ask Miguel about the order of the execution when there is more tham 2 players (more than 1 AI Player)
+                // TODO Preguntar a Miguel sobre el orden de ejecución de la IA
                 endButton.setVisible(false);
                 for (int i=1; i<players.size(); i++) {
                     final int aiPlayer=i;
                     Random r = new Random();
                     final int number = r.nextInt(6) + 1;
                     final int number2 = r.nextInt(6) + 1;
-                    if (!players.get(aiPlayer).isInJail()) { // If player isn't in jail
+                    if (!players.get(aiPlayer).isInJail()) { // If the AI player isn't in jail
                         GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
                         bDialog.setTitle(players.get(aiPlayer).getName()+" ha tirado dados");
                         bDialog.setMessage("Dado 1: "+number+"\nDado 2: "+number2);
@@ -374,11 +466,12 @@ public abstract class BaseScreen implements Screen {
                         bDialog.setClickListener(new ButtonClickListener() {
                             @Override
                             public void click(int button) {
-                                players.get(aiPlayer).playerMovement((number+number2), 0.5f, false);
+                                players.get(aiPlayer).playerMovement(14, 0.5f, false);
                                 landingSituations(players.get(aiPlayer));
                             }
                         });
-                    } else { // If AI Player is in jail
+                    } else {
+                        // If the AI Player is in jail
                         // The order of preference for the AI Player to get out of jail is as follows:
                         // 1º - The AI will check whether he has 'Get out of jail free' cards. If true, he will use them
                         // 2º - If 1º option is false, he will check whether he has the amount necessary to pay the fine (50€). If true, he will pay the fine
@@ -402,6 +495,7 @@ public abstract class BaseScreen implements Screen {
                                         public void click(int button) {
                                             players.get(aiPlayer).playerMovement((number+number2), 0.5f, false);
                                             landingSituations(players.get(aiPlayer));
+                                            players.get(aiPlayer).setInJail(false);
                                         }
                                     });
                                 }
@@ -426,6 +520,7 @@ public abstract class BaseScreen implements Screen {
                                         public void click(int button) {
                                             players.get(aiPlayer).playerMovement((number+number2), 0.5f, false);
                                             landingSituations(players.get(aiPlayer));
+                                            players.get(aiPlayer).setInJail(false);
                                         }
                                     });
                                 }
@@ -446,6 +541,7 @@ public abstract class BaseScreen implements Screen {
                                         bDialog.setMessage(players.get(aiPlayer).getName()+" ha salido de la cárcel tirando dobles");
                                         players.get(aiPlayer).playerMovement((number+number2), 0.5f, false);
                                         landingSituations(players.get(aiPlayer));
+                                        players.get(aiPlayer).setInJail(false);
                                     }
                                 }
                             });
@@ -457,6 +553,7 @@ public abstract class BaseScreen implements Screen {
             }
         });
 
+        // Button for the community chest case
         chestButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -466,6 +563,7 @@ public abstract class BaseScreen implements Screen {
             }
         });
 
+        // Button for the chance case
         chanceButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -479,10 +577,11 @@ public abstract class BaseScreen implements Screen {
             }
         });
 
+        // Button where you can save the game progress
+        // If the game is saved succesfully, a dialog will show
         saveButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // TODO Download 'DB Browser for SQLite' to check functionality
                 monopolyDatabase.saveGame(players, board);
                 GDXButtonDialog dialogDiceThrow = dialogs.newDialog(GDXButtonDialog.class);
                 dialogDiceThrow.setTitle("Partida guardada");
@@ -496,59 +595,79 @@ public abstract class BaseScreen implements Screen {
         Gdx.input.setInputProcessor(screen);
     }
 
+    /**
+     * Function where certain situations will happen depending on where the player lands on the board
+     * @param p The player affected
+     */
     public static void landingSituations(final Player p) {
         switch (board[p.getBoardPosition()].getType()) {
             case CITY:
             case STATION:
                 if (board[p.getBoardPosition()].getProperty().getOwner()==null) { // If property doesn't have an owner
-                    if (!p.getName().contains("IA")) {
+                    if (!p.getName().contains("IA")) { // If the player isn't an AI
                         diceButton.setVisible(false);
                         buyButton.setVisible(true);
                         auctionButton.setVisible(true);
-                    } else {
-                        GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
-                        bDialog.setTitle("Propiedad Comprada");
+                    } else { // If the player is an AI
                         Property prop=board[p.getBoardPosition()].getProperty();
-                        bDialog.setMessage(p.getName()+" ha comprado "+prop.getName()+" por "+prop.getValue()+"€");
-                        bDialog.addButton("OK");
-                        bDialog.setClickListener(new ButtonClickListener() {
-                            @Override
-                            public void click(int button) {
-                                p.buyProperty(board);
-                            }
-                        });
-                        bDialog.build().show();
+                        if (prop.getValue()<=p.getMoney()) { // If player has enough money to buy the property
+                            GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
+                            bDialog.setTitle("Propiedad Comprada");
+                            bDialog.setMessage(p.getName()+" ha comprado "+prop.getName()+" por "+prop.getValue()+"€");
+                            bDialog.addButton("OK");
+                            bDialog.setClickListener(new ButtonClickListener() {
+                                @Override
+                                public void click(int button) {
+                                    p.buyProperty(board);
+                                }
+                            });
+                            bDialog.build().show();
+                        } else {
+                            // TODO Auction
+                        }
                     }
                 } else { // If property has an owner
                     final Property prop=board[p.getBoardPosition()].getProperty();
                     if (!prop.getOwner().equals(p)) { // If the property isn't owned by the same player throwing the dice
-                        GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
-                        bDialog.setTitle("Pagar Renta");
-                        bDialog.setMessage(prop.getOwner().getName()+" es el dueño de "+prop.getName()+". " +
-                                "Deberá pagar la renta de la propiedad: "+prop.getRentPrice()+"€");
-                        bDialog.addButton("OK");
-                        bDialog.setClickListener(new ButtonClickListener() {
-                            @Override
-                            public void click(int button) {
-                                boolean ownerPaid=false;
-                                boolean playerPaid=false;
-                                for (int i=0; i<players.size(); i++) {
-                                    if (!ownerPaid) {
-                                        if (players.get(i).equals(prop.getOwner())) {
-                                            players.get(i).setMoney(players.get(i).getMoney()+prop.getRentPrice());
-                                            ownerPaid=true;
+                        if (!prop.isMortgaged()) { // If property isn't mortgaged, the rent will have to be paid
+                            GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
+                            bDialog.setTitle("Pagar Renta");
+                            bDialog.setMessage(prop.getOwner().getName()+" es el dueño de "+prop.getName()+". " +
+                                    "Deberá pagar la renta de la propiedad: "+prop.getRentPrice()+"€");
+                            bDialog.addButton("OK");
+                            bDialog.setClickListener(new ButtonClickListener() {
+                                @Override
+                                public void click(int button) {
+                                    boolean ownerPaid=false;
+                                    boolean playerPaid=false;
+                                    for (int i=0; i<players.size(); i++) {
+                                        if (!ownerPaid) {
+                                            if (players.get(i).equals(prop.getOwner())) {
+                                                players.get(i).setMoney(players.get(i).getMoney()+prop.getRentPrice());
+                                                ownerPaid=true;
+                                            }
                                         }
-                                    }
-                                    if (!playerPaid) {
-                                        if (players.get(i).equals(p)) {
-                                            players.get(i).setMoney(players.get(i).getMoney()-prop.getRentPrice());
-                                            playerPaid=true;
+                                        if (!playerPaid) {
+                                            if (players.get(i).equals(p)) {
+                                                players.get(i).setMoney(players.get(i).getMoney()-prop.getRentPrice());
+                                                playerPaid=true;
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        });
-                        bDialog.build().show();
+                            });
+                            bDialog.build().show();
+                        } else { // If property is mortgaged, rent will not have to be paid
+                            GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
+                            bDialog.setTitle(prop.getName());
+                            bDialog.setMessage("Dicha porpiedad esta hipotecada. Por eso, no hace falta pagar la renta");
+                            bDialog.addButton("OK");
+                            bDialog.build().show();
+                        }
+                    }
+                    if (!p.getName().contains("IA")) {
+                        endButton.setVisible(true);
+                        diceButton.setVisible(false);
                     }
                 }
                 break;
@@ -635,6 +754,7 @@ public abstract class BaseScreen implements Screen {
 
     @Override
     public void show() {
+
     }
 
     @Override
@@ -647,7 +767,7 @@ public abstract class BaseScreen implements Screen {
         screen.act(delta);
         screen.draw();
         spriteBatch.begin();
-        for (int i=0; i<players.size(); i++) {
+        for (int i=0; i<players.size(); i++) { // Text with the player details will be drawn on the screen here
             if (i==0) {
                 fontText.draw(spriteBatch, "Nombre: "+players.get(i).getName()+"\n " +
                         "Figura: "+players.get(i).getSelectedPiece()+"\n" +

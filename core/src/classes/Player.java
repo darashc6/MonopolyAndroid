@@ -36,6 +36,7 @@ public class Player extends Actor implements Serializable {
     /**
      * Initial constructor of the Player class
      * At the beginning of the match, the player nor is bankrupt, nor is he in jail, nor does he have 'Get out of jail free' Cards, and nor does he have any properties
+     * This constructor is used in the Android activity, since there are no sprites in the Activity
      * @param name Player name
      * @param piece Selected piece
      */
@@ -50,17 +51,24 @@ public class Player extends Actor implements Serializable {
         this.nGetOutOfJailFreeCards = 0;
     }
 
-    public Player(String name, String piece, float x, float y) {
-        this.name = name;
-        this.boardPosition = 0;
-        this.selectedPiece=piece;
-        this.money = 2000;
-        this.propertiesBought = new ArrayList<Property>();
-        this.isBankrupt = false;
-        this.isInJail = false;
-        this.nGetOutOfJailFreeCards = 0;
+    /**
+     * 2nd constructor of the Player class
+     * This constructor will be used to retrieve the player's data from the game's database
+     * @param p Player
+     * @param x Initial position x
+     * @param y Initial position y
+     */
+    public Player(Player p, float x, float y) {
+        this.name = p.getName();
+        this.boardPosition = p.getBoardPosition();
+        this.selectedPiece = p.getSelectedPiece();
+        this.money = p.getMoney();
+        this.propertiesBought = p.getPropertiesBought();
+        this.isBankrupt = p.isBankrupt();
+        this.isInJail = p.isInJail();
+        this.nGetOutOfJailFreeCards = p.getnGetOutOfJailFreeCards();
 
-        sprite=new Sprite(new Texture("pieces/"+piece.toLowerCase()+".png"));
+        sprite=new Sprite(new Texture("pieces/"+selectedPiece.toLowerCase()+".png"));
         sprite.setBounds(x, y, Gdx.graphics.getWidth()/25f, Gdx.graphics.getHeight()/25f);
         this.setPosition(x, y);
         this.setSize(Gdx.graphics.getWidth()/25f,Gdx.graphics.getHeight()/25f);
