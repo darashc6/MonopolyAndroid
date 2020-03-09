@@ -59,6 +59,20 @@ class AndroidDatabase(var context: Context) : Database {
         return players
     }
 
+    override fun loadTurn(): Int {
+        var turn=0
+        val db=openHelper.writableDatabase
+        val cursorMatchSaved: Cursor=db.query(SAVED_MATCH_TABLE_NAME, null, null, null, null, null, null, null)
+
+        if (cursorMatchSaved.moveToNext()) {
+            turn=cursorMatchSaved.getInt(cursorMatchSaved.getColumnIndex("turn"))
+        }
+        cursorMatchSaved.close()
+
+        return turn
+    }
+
+
     override fun checkSavedGame(): Boolean {
         var isGameSaved = false
         val db=openHelper.writableDatabase
@@ -81,7 +95,7 @@ class AndroidDatabase(var context: Context) : Database {
         db.delete(SAVED_MATCH_TABLE_NAME, null, null)
     }
 
-    override fun saveGame(players: ArrayList<Player>, board: Array<Square>) {
+    override fun saveGame(players: ArrayList<Player>, board: Array<Square>, turn: Byte) {
         val db=openHelper.writableDatabase
         db.delete(PLAYERS_TABLE_NAME, null, null)
         db.delete(PROPERTIES_TABLE_NAME, null, null)
@@ -128,6 +142,7 @@ class AndroidDatabase(var context: Context) : Database {
         cursorProperties.close()
 
         cv.put("saved", 1)
+        cv.put("turn", turn)
         db.insert(SAVED_MATCH_TABLE_NAME, null, cv)
         cursorMatchSaved.close()
 

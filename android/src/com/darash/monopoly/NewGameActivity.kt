@@ -19,7 +19,9 @@ class NewGameActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_game)
-        arrayPlayers= ArrayList(2)
+        arrayPlayers=ArrayList()
+        arrayPlayers.add(Player("Jugador", "Barco"))
+        arrayPlayers.add(Player("IA 1", "Barco"))
         val adapterSpinner=ArrayAdapter.createFromResource(this, R.array.number_players, android.R.layout.simple_spinner_item)
         adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerNumberPlayers.adapter=adapterSpinner
@@ -33,24 +35,14 @@ class NewGameActivity : AppCompatActivity() {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                when (spinnerNumberPlayers.selectedItem as String) {
-                    "2" -> {
-                        arrayPlayers.clear()
-                        arrayPlayers.add(Player("Jugador", "Barco"))
-                        arrayPlayers.add(Player("IA 1", "Barco"))
+                val nPlayers = Integer.parseInt(spinnerNumberPlayers.selectedItem as String)
+                if (arrayPlayers.size < nPlayers) {
+                    while (arrayPlayers.size < nPlayers) {
+                        arrayPlayers.add(Player("IA "+arrayPlayers.size, "Barco"))
                     }
-                    "3" -> {
-                        arrayPlayers.clear()
-                        arrayPlayers.add(Player("Jugador", "Barco"))
-                        arrayPlayers.add(Player("IA 1", "Barco"))
-                        arrayPlayers.add(Player("IA 2", "Barco"))
-                    }
-                    "4" -> {
-                        arrayPlayers.clear()
-                        arrayPlayers.add(Player("Jugador", "Barco"))
-                        arrayPlayers.add(Player("IA 1", "Barco"))
-                        arrayPlayers.add(Player("IA 2", "Barco"))
-                        arrayPlayers.add(Player("IA 3", "Barco"))
+                } else if (arrayPlayers.size > nPlayers) {
+                    while (arrayPlayers.size > nPlayers) {
+                        arrayPlayers.removeAt(arrayPlayers.size-1)
                     }
                 }
             }

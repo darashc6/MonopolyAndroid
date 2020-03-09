@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import database.AndroidDatabase
+import services.MyService
 
 /**
  * Activity launcher of the application
@@ -20,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        startOwnService()
     }
 
     /**
@@ -52,6 +54,11 @@ class MainActivity : AppCompatActivity() {
             val newGame=Intent(this, NewGameActivity::class.java)
             startActivity(newGame)
         }
+    }
+
+    fun startOwnService() {
+        val intentService=Intent(this, MyService::class.java)
+        startService(intentService)
     }
 
     override fun onBackPressed() {

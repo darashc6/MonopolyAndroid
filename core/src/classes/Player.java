@@ -44,7 +44,7 @@ public class Player extends Actor implements Serializable {
         this.name = name;
         this.selectedPiece=piece;
         this.boardPosition = 0;
-        this.money = 2000;
+        this.money = 3000;
         this.propertiesBought = new ArrayList<Property>();
         this.isBankrupt = false;
         this.isInJail = false;
@@ -53,7 +53,7 @@ public class Player extends Actor implements Serializable {
 
     /**
      * 2nd constructor of the Player class
-     * This constructor will be used to retrieve the player's data from the game's database
+     * This constructor will be used to initialize the player in the game
      * @param p Player
      * @param x Initial position x
      * @param y Initial position y
@@ -76,6 +76,17 @@ public class Player extends Actor implements Serializable {
         sprite.setOrigin(this.getOriginX(),this.getOriginY());
     }
 
+    /**
+     * 3rd constructor of the Player class
+     * This constructor is used to retrieve all the player data from the game's database
+     * @param name Player's name
+     * @param piece Selected piece chosen
+     * @param position Board position occupied
+     * @param money Player's money
+     * @param bankrupt true if the player is bankrupt, false if otherwise
+     * @param jail true if the player is in jail, false if otherwise
+     * @param cards The amount of 'Get out of jail free' cards the user has
+     */
     public Player(String name, String piece, int position, int money, boolean bankrupt, boolean jail, int cards) {
         this.name = name;
         this.selectedPiece=piece;
@@ -288,7 +299,13 @@ public class Player extends Actor implements Serializable {
         }
     }
 
-    public void communityChestCase(String[] cc, GDXDialogs dialogs) {
+    /**
+     * Function where the community chest case will occur in case the player lands in one of the 'Community Chest' position
+     * @param cc Array of String containing all the community chest cases
+     * @param dialogs Dialogs where the result will be shown
+     * @param p Player taking part
+     */
+    public void communityChestCase(String[] cc, GDXDialogs dialogs, final Player p) {
         Random r=new Random();
         final int randomNum=r.nextInt(cc.length);
         String textCommunityChest=cc[randomNum];
@@ -303,51 +320,57 @@ public class Player extends Actor implements Serializable {
             public void click(int button) {
                 switch (randomNum) {
                     case 0:
-                        setnGetOutOfJailFreeCards(getnGetOutOfJailFreeCards()+1);
+                        p.setnGetOutOfJailFreeCards(getnGetOutOfJailFreeCards()+1);
                         break;
                     case 1:
                     case 4:
-                        setMoney(getMoney()-50);
+                        p.setMoney(getMoney()-50);
                         break;
                     case 2:
                     case 3:
                     case 9:
-                        setMoney(getMoney()+100);
+                        p.setMoney(getMoney()+100);
                         break;
                     case 5:
                         setMoney(getMoney()+20);
                         break;
                     case 6:
-                        setMoney(getMoney()-100);
+                        p.setMoney(getMoney()-100);
                         break;
                     case 7:
-                        if (getBoardPosition()-10<=0) {
-                            playerMovement(getBoardPosition()-10, 1f, true);
+                        if (p.getBoardPosition()-10<=0) {
+                            p.playerMovement(getBoardPosition()-10, 1f, true);
                         } else {
-                            playerMovement(10-getBoardPosition(), 0.5f, false);
+                            p.playerMovement(10-getBoardPosition(), 0.5f, false);
                         }
-                        setInJail(true);
+                        p.setInJail(true);
                         break;
                     case 8:
-                        setMoney(getMoney()+25);
+                        p.setMoney(getMoney()+25);
                         break;
                     case 10:
-                        setMoney(getMoney()+50);
+                        p.setMoney(getMoney()+50);
                         break;
                     case 11:
-                        setMoney(getMoney()+10);
+                        p.setMoney(getMoney()+10);
                         break;
                     case 12:
-                        playerMovement(40-getBoardPosition(), 1f, false);
+                        p.playerMovement(40-getBoardPosition(), 1f, false);
                         break;
                     case 13:
-                        setMoney(getMoney()+200);
+                        p.setMoney(getMoney()+200);
                         break;
                 }
             }
         });
     }
 
+    /**
+     * Function where the chance case will happen when the player lands in one of the 'Chance' positions
+     * @param player Player taking part
+     * @param c Array of String containing all the chance cases
+     * @param dialogs Dialogs where the result will be shown
+     */
     public void chanceCase(final Player player, String[] c, GDXDialogs dialogs) {
         final Random r=new Random();
         final int randomNum=r.nextInt(c.length);
@@ -363,7 +386,7 @@ public class Player extends Actor implements Serializable {
             public void click(int button) {
                 switch (randomNum) {
                     case 0:
-                        player.playerMovement(39-player.getBoardPosition(), 1f, false);
+                        playerMovement(39-player.getBoardPosition(), 1f, false);
                         BaseScreen.landingSituations(player);
                         break;
                     case 1:
@@ -422,7 +445,60 @@ public class Player extends Actor implements Serializable {
         });
     }
 
+    /**
+     * Function where the player will pay the property's rent
+     * @param dialogs Dialog showing information
+     * @param prop Property where the player has landed
+     * @param players ArrayList of players in the game
+     * @param p Player who has to pay the rent
+     */
+    public void payRent(GDXDialogs dialogs, final Property prop, final ArrayList<Player> players, final Player p) {
+        GDXButtonDialog bDialog = dialogs.newDialog(GDXButtonDialog.class);
+        bDialog.setTitle("Pagar Renta");
+        bDialog.setMessage(prop.getOwner().getName()+" es el dueño de "+prop.getName()+". " +
+                "Deberá pagar la renta de la propiedad: "+prop.getRentPrice()+"€");
+        bDialog.addButton("OK");
+        bDialog.setClickListener(new ButtonClickListener() {
+            @Override
+            public void click(int button) {
+                boolean ownerPaid=false;
+                boolean playerPaid=false;
+                for (int i=0; i<players.size(); i++) {
+                    if (!ownerPaid) {
+                        if (players.get(i).equals(prop.getOwner())) {
+                            players.get(i).setMoney(players.get(i).getMoney()+prop.getRentPrice());
+                            ownerPaid=true;
+                        }
+                    }
+                    if (!playerPaid) {
+                        if (players.get(i).equals(p)) {
+                            players.get(i).setMoney(players.get(i).getMoney()-prop.getRentPrice());
+                            playerPaid=true;
+                        }
+                    }
+                }
+            }
+        });
+        bDialog.build().show();
+    }
 
+    public void autoMortgageProperties(Property prop) {
+        boolean declareBankrupt=true;
+        for (Property property: this.getPropertiesBought()) {
+            if (!property.isMortgaged()) {
+                property.setMortgaged(true);
+                if (this.getMoney()>=prop.getRentPrice()) {
+                    declareBankrupt=false;
+                }
+            }
+            if (!declareBankrupt) {
+                break;
+            }
+        }
+        if (declareBankrupt) {
+            this.setBankrupt(true);
+        }
+    }
 
     /**
      * Function overriding the toString function

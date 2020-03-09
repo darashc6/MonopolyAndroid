@@ -6,8 +6,9 @@ import classes.Player;
 import classes.Square;
 
 public interface Database {
-    public void saveGame(ArrayList<Player> players, Square[] board);
-    public ArrayList<Player> loadGame(Square[] board);
-    public boolean checkSavedGame();
-    public void deleteMatch();
+    void saveGame(ArrayList<Player> players, Square[] board, Byte turn);
+    ArrayList<Player> loadGame(Square[] board);
+    boolean checkSavedGame();
+    void deleteMatch();
+    int loadTurn();
 }
