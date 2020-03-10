@@ -207,11 +207,18 @@ public abstract class BaseScreen implements Screen {
                                 Random r=new Random();
                                 ArrayList<Integer> listBets=new ArrayList<>();
                                 listBets.add(Integer.parseInt(text));
-                                for (int i=0; i<players.size()-1; i++) {
-                                    listBets.add(r.nextInt(100)+property.getValue());
+                                for (int i=1; i<players.size(); i++) {
+                                    int aiBet=r.nextInt(100)+property.getValue();
+                                    if (players.get(i).getMoney()>=aiBet) {
+                                        listBets.add(aiBet);
+                                    } else { // If the AI has bet more than his balance
+                                        listBets.add(players.get(i).getMoney());
+                                    }
                                 }
                                 final int maxBet=Collections.max(listBets);
                                 final int nPlayer=listBets.indexOf(maxBet);
+
+                                Gdx.app.log("position", nPlayer+"");
 
                                 buttonDialog = dialogs.newDialog(GDXButtonDialog.class);
                                 showBasicDialog(buttonDialog, "Subasta",
@@ -219,8 +226,8 @@ public abstract class BaseScreen implements Screen {
                                 buttonDialog.setClickListener(new ButtonClickListener() {
                                     @Override
                                     public void click(int button) {
-                                        board[players.get(nPlayer).getBoardPosition()].getProperty().setOwner(players.get(nPlayer));
-                                        players.get(nPlayer).getPropertiesBought().add(board[players.get(nPlayer).getBoardPosition()].getProperty());
+                                        board[property.getBoardPosition()].getProperty().setOwner(players.get(nPlayer));
+                                        players.get(nPlayer).getPropertiesBought().add(board[property.getBoardPosition()].getProperty());
                                         players.get(nPlayer).setMoney(players.get(nPlayer).getMoney()-maxBet);
                                         buyButton.setVisible(false);
                                         auctionButton.setVisible(false);
@@ -393,6 +400,11 @@ public abstract class BaseScreen implements Screen {
                                             players.get(0).setInJail(false);
                                             players.get(0).playerMovement((number+number2), 0.5f, false);
                                             landingSituations(players.get(0));
+                                        } else {
+                                            diceButton.setVisible(false);
+                                            mortgageButton.setVisible(false);
+                                            unmortgageButton.setVisible(false);
+                                            endButton.setVisible(true);
                                         }
                                     }
                                 });
@@ -522,7 +534,21 @@ public abstract class BaseScreen implements Screen {
                                 }
                             });
                         } else {
-                            p.autoMortgageProperties(prop);
+                            boolean declareBankrupt=true;
+                            for (Property property: p.getPropertiesBought()) {
+                                if (!property.isMortgaged()) {
+                                    property.setMortgaged(true);
+                                    p.setMoney(p.getMoney()+property.getMortgagePrice());
+                                    if (p.getMoney()>=prop.getValue()) {
+                                        declareBankrupt=false;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (declareBankrupt) {
+                                p.setBankrupt(true);
+                            }
+                            Gdx.app.log("isBankrupt", p.isBankrupt()+"");
                             if (p.isBankrupt()) {
                                 buttonDialog = dialogs.newDialog(GDXButtonDialog.class);
                                 showBasicDialog(buttonDialog, p.getName()+" declara bancarrota",
@@ -531,6 +557,7 @@ public abstract class BaseScreen implements Screen {
                                 buttonDialog.setClickListener(new ButtonClickListener() {
                                     @Override
                                     public void click(int button) {
+                                        p.setBankrupt(true);
                                         for (Square sq: board) {
                                             if (sq.getType()==Square.SquareType.CITY||sq.getType()==Square.SquareType.STATION) {
                                                 if (sq.getProperty().getOwner().getName().equals(p.getName())) {
@@ -538,7 +565,6 @@ public abstract class BaseScreen implements Screen {
                                                 }
                                             }
                                         }
-                                        players.get(players.indexOf(p)).remove();
                                     }
                                 });
                             } else {
@@ -553,13 +579,38 @@ public abstract class BaseScreen implements Screen {
                             if (p.getMoney()>=prop.getRentPrice()) { // If the AI player has enough money for the rent
                                 p.payRent(dialogs, prop, players, p);
                             } else {
-                                p.autoMortgageProperties(prop);
+                                boolean declareBankrupt=true;
+                                for (Property property: p.getPropertiesBought()) {
+                                    if (!property.isMortgaged()) {
+                                        property.setMortgaged(true);
+                                        p.setMoney(p.getMoney()+property.getMortgagePrice());
+                                        if (p.getMoney()>=prop.getRentPrice()) {
+                                            declareBankrupt=false;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (declareBankrupt) {
+                                    p.setBankrupt(true);
+                                }
                                 if (p.isBankrupt()) {
                                     buttonDialog = dialogs.newDialog(GDXButtonDialog.class);
                                     showBasicDialog(buttonDialog, p.getName()+" declara bancarrota",
                                             "Debido a su situación financiera, "+p.getName()+" ha declarado bancarrota. " +
                                                     "Todas sus propiedades se pueden comprar");
-                                    p.setBankrupt(true);
+                                    buttonDialog.setClickListener(new ButtonClickListener() {
+                                        @Override
+                                        public void click(int button) {
+                                            p.setBankrupt(true);
+                                            for (Square sq: board) {
+                                                if (sq.getType()==Square.SquareType.CITY||sq.getType()==Square.SquareType.STATION) {
+                                                    if (sq.getProperty().getOwner().getName().equals(p.getName())) {
+                                                        sq.getProperty().setOwner(null);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
                                 } else {
                                     p.payRent(dialogs, prop, players, p);
                                 }
@@ -577,7 +628,6 @@ public abstract class BaseScreen implements Screen {
                                             }
                                         }
                                     }
-                                    players.get(players.indexOf(p)).remove();
                                 }
                             });
                         }
@@ -592,6 +642,7 @@ public abstract class BaseScreen implements Screen {
                 if (!p.getName().contains("IA")) {
                     chestButton.setVisible(true);
                     diceButton.setVisible(false);
+                    endButton.setVisible(false);
                 } else {
                     p.communityChestCase(communityChest, dialogs, p);
                 }
@@ -600,6 +651,7 @@ public abstract class BaseScreen implements Screen {
                 if (!p.getName().contains("IA")) {
                     chanceButton.setVisible(true);
                     diceButton.setVisible(false);
+                    endButton.setVisible(false);
                 } else {
                     p.chanceCase(p, chance, dialogs);
                 }
@@ -656,13 +708,22 @@ public abstract class BaseScreen implements Screen {
         }
     }
 
-    private static void showBasicDialog(GDXButtonDialog bDialog, String title, String message) {
+    /**
+     * Function showing a basic dialog with one button
+     * @param bDialog dialog to show
+     * @param title Title of the dialog
+     * @param message Message of the dialog
+     */
+    public static void showBasicDialog(GDXButtonDialog bDialog, String title, String message) {
         bDialog.setTitle(title);
         bDialog.setMessage(message);
         bDialog.addButton("OK");
         bDialog.build().show();
     }
 
+    /**
+     * AI Function to throw dice, pay property, rent, etc.
+     */
     private static void AiFunction() {
         if (!players.get(turn).isBankrupt()) {
             final int aiPlayer=turn;
@@ -747,16 +808,22 @@ public abstract class BaseScreen implements Screen {
                     });
                 }
             }
+        } else {
+            buttonDialog = dialogs.newDialog(GDXButtonDialog.class);
+            showBasicDialog(buttonDialog, "Bancarrota",
+                    "Debido a que "+players.get(turn).getName()+" ha declarado bancarrota, no pdrá continuar con la partida.");
         }
         turn++;
         if (turn==players.size()) {
             turn=0;
+            endButton.setVisible(false);
             diceButton.setVisible(true);
             mortgageButton.setVisible(true);
             unmortgageButton.setVisible(true);
             saveButton.setVisible(true);
         } else {
             endButton.setVisible(true);
+            diceButton.setVisible(false);
             mortgageButton.setVisible(false);
             unmortgageButton.setVisible(false);
             saveButton.setVisible(true);

@@ -7,8 +7,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveByAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
-import com.badlogic.gdx.utils.compression.lzma.Base;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
@@ -339,7 +337,7 @@ public class Player extends Actor implements Serializable {
                         p.setMoney(getMoney()-100);
                         break;
                     case 7:
-                        if (p.getBoardPosition()-10<=0) {
+                        if (p.getBoardPosition()-10>=0) {
                             p.playerMovement(getBoardPosition()-10, 1f, true);
                         } else {
                             p.playerMovement(10-getBoardPosition(), 0.5f, false);
@@ -479,28 +477,6 @@ public class Player extends Actor implements Serializable {
             }
         });
         bDialog.build().show();
-    }
-
-    /**
-     * Function where the AI player will try to mortgage hi available properties in order to pay the property's rent
-     * @param prop Property the user ties to pay the rent
-     */
-    public void autoMortgageProperties(Property prop) {
-        boolean declareBankrupt=true;
-        for (Property property: this.getPropertiesBought()) {
-            if (!property.isMortgaged()) {
-                property.setMortgaged(true);
-                if (this.getMoney()>=prop.getRentPrice()) {
-                    declareBankrupt=false;
-                }
-            }
-            if (!declareBankrupt) {
-                break;
-            }
-        }
-        if (declareBankrupt) {
-            this.setBankrupt(true);
-        }
     }
 
     /**

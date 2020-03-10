@@ -14,11 +14,19 @@ import database.Database;
 import screens.BaseScreen;
 import screens.Board;
 
+/**
+ * Class that show the game
+ */
 public class MyGame extends Game {
-	private BaseScreen currentScreen;
-	private ArrayList<Player> arrayPlayers;
-	private Database databaseMonopoly;
+	private BaseScreen currentScreen; // Game's current screen
+	private ArrayList<Player> arrayPlayers; // ArrayList of Players
+	private Database databaseMonopoly; // Game's database
 
+	/**
+	 * Constructor of Game
+	 * @param players ArrayList of players
+	 * @param db Game's database
+	 */
 	public MyGame(ArrayList<Player> players, Database db) {
 		this.arrayPlayers=players;
 		this.databaseMonopoly=db;
@@ -39,6 +47,10 @@ public class MyGame extends Game {
 		currentScreen.dispose();
 	}
 
+	/**
+	 * Fucntion that sets the current screen of the game
+	 * @param bs Screen to show
+	 */
 	private void setCurrentScreen(BaseScreen bs) {
 		this.currentScreen=bs;
 		this.setScreen(currentScreen);

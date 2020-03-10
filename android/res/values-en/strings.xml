@@ -11,14 +11,14 @@
         <item>4</item>
     </string-array>
     <string-array name="pieces">
-        <item>Boat</item>
-        <item>Horse</item>
-        <item>Wheelbarrow</item>
-        <item>Car</item>
-        <item>Thimble</item>
-        <item>Hat</item>
-        <item>Warrior</item>
-        <item>Shoe</item>
+        <item>Barco</item>
+        <item>Caballo</item>
+        <item>Carretilla</item>
+        <item>Coche</item>
+        <item>Dedal</item>
+        <item>Gorra</item>
+        <item>Guerrero</item>
+        <item>Zapato</item>
     </string-array>
     <string name="exit_application_title">Exit app?</string>
     <string name="exit_application_message">Are you sure you want to leave my extraordinary app that\'s definitely not a copy-paste from last year\'s game?</string>
