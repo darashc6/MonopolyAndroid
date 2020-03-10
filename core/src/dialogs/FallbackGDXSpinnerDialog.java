@@ -16,7 +16,7 @@ public class FallbackGDXSpinnerDialog implements GDXSpinnerDialog {
     }
 
     @Override
-    public GDXSpinnerDialog setPropertyList(ArrayList<Property> list, boolean isMortgaging) {
+    public GDXSpinnerDialog setList(ArrayList<Property> list) {
         return this;
     }
 

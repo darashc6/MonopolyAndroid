@@ -14,6 +14,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.darash.monopoly.MyGame;
+
+import java.awt.Button;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -64,7 +66,7 @@ public abstract class BaseScreen implements Screen {
     private BitmapFont fontText; // Text displaying details of the player (Player name, Piece selected, money)
     private Database monopolyDatabase; // Database where all the progress is saved
     private static byte turn; // Turn of the player
-    private static GDXButtonDialog buttonDialog;
+    private static GDXButtonDialog buttonDialog; // AlertDialog wih a button
 
     /**
      * Main constructor of BaseScreen
@@ -264,11 +266,14 @@ public abstract class BaseScreen implements Screen {
                     spinnerDialog.setMessage("Elija la propiedad que desea hipotecar");
                     spinnerDialog.setOKButtonText("OK");
                     spinnerDialog.setCancelButtonText("Cancelar");
-                    spinnerDialog.setPropertyList(propertiesInUse, true);
+                    spinnerDialog.setList(propertiesInUse);
                     spinnerDialog.setSpinnerDialogListener(new SpinnerDialogListener() {
                         @Override
                         public void confirm() {
                             Property prop=propertiesInUse.get(spinnerDialog.getSelectedPosition());
+                            buttonDialog=dialogs.newDialog(GDXButtonDialog.class);
+                            showBasicDialog(buttonDialog, "Propiedad hipotecada",
+                                    "Se ha hipotecado la propiedad "+prop.getName()+" por un valor de "+prop.getMortgagePrice()+"€");
                             players.get(0).getPropertiesBought().get(players.get(0).getPropertiesBought().indexOf(prop)).setMortgaged(true);
                             players.get(0).setMoney(players.get(0).getMoney()+prop.getMortgagePrice());
                         }
@@ -312,11 +317,14 @@ public abstract class BaseScreen implements Screen {
                     spinnerDialog.setMessage("Elija la propiedad que desea deshipotecar");
                     spinnerDialog.setOKButtonText("OK");
                     spinnerDialog.setCancelButtonText("Cancelar");
-                    spinnerDialog.setPropertyList(propertiesMortgaged, false);
+                    spinnerDialog.setList(propertiesMortgaged);
                     spinnerDialog.setSpinnerDialogListener(new SpinnerDialogListener() {
                         @Override
                         public void confirm() {
                             Property prop=propertiesMortgaged.get(spinnerDialog.getSelectedPosition());
+                            buttonDialog=dialogs.newDialog(GDXButtonDialog.class);
+                            showBasicDialog(buttonDialog, "Propiedad hipotecada",
+                                    "Se ha deshipotecado la propiedad "+prop.getName()+" por un valor de "+prop.getRedeemPrice()+"€");
                             players.get(0).getPropertiesBought().get(players.get(0).getPropertiesBought().indexOf(prop)).setMortgaged(false);
                             players.get(0).setMoney(players.get(0).getMoney()-prop.getRedeemPrice());
                         }
@@ -509,6 +517,19 @@ public abstract class BaseScreen implements Screen {
                                 showBasicDialog(buttonDialog, p.getName()+" declara bancarrota",
                                         "Debido a su situación financiera, "+p.getName()+" ha declarado bancarrota. " +
                                                 "Todas sus propiedades se pueden comprar");
+                                buttonDialog.setClickListener(new ButtonClickListener() {
+                                    @Override
+                                    public void click(int button) {
+                                        for (Square sq: board) {
+                                            if (sq.getType()==Square.SquareType.CITY||sq.getType()==Square.SquareType.STATION) {
+                                                if (sq.getProperty().getOwner().getName().equals(p.getName())) {
+                                                    sq.getProperty().setOwner(null);
+                                                }
+                                            }
+                                        }
+                                        players.get(players.indexOf(p)).remove();
+                                    }
+                                });
                             } else {
                                 p.buyProperty(board);
                             }
@@ -538,7 +559,14 @@ public abstract class BaseScreen implements Screen {
                             buttonDialog.setClickListener(new ButtonClickListener() {
                                 @Override
                                 public void click(int button) {
-
+                                    for (Square sq: board) {
+                                        if (sq.getType()==Square.SquareType.CITY||sq.getType()==Square.SquareType.STATION) {
+                                            if (sq.getProperty().getOwner().getName().equals(p.getName())) {
+                                                sq.getProperty().setOwner(null);
+                                            }
+                                        }
+                                    }
+                                    players.get(players.indexOf(p)).remove();
                                 }
                             });
                         }
@@ -566,7 +594,6 @@ public abstract class BaseScreen implements Screen {
                 }
                 break;
             case GO:
-                p.setMoney(p.getMoney()+200);
                 break;
             case TAXES:
                 if (p.getBoardPosition()==4) {

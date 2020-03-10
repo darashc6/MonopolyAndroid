@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     fun startNewGameActivity(view: View) {
         gameSaved=databaseGame.checkSavedGame()
         if (gameSaved) {
+            // If game is saved in the database, an AlertDialog will be shown asking whether the user wants to overwrite the previous game
             val dialog = AlertDialog.Builder(this)
             dialog.setIcon(R.drawable.ic_warning_black_24dp)
             dialog.setTitle(getString(R.string.overwrite_game_title))
@@ -43,6 +44,7 @@ class MainActivity : AppCompatActivity() {
 
             dialog.setPositiveButton(getString(R.string.overwrite_game_positive), object : DialogInterface.OnClickListener{
                 override fun onClick(dialog: DialogInterface?, which: Int) {
+                    // When pressed, it will delete the previous game in the database and it will start a new one from scratch
                     Toast.makeText(applicationContext, applicationContext.getString(R.string.match_deleted_message), Toast.LENGTH_LONG).show()
                     databaseGame.deleteMatch()
                     val newGame=Intent(applicationContext, NewGameActivity::class.java)
@@ -56,15 +58,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Function that starts the customized service
+     */
     fun startOwnService() {
         val intentService=Intent(this, MyService::class.java)
         startService(intentService)
     }
 
+    /**
+     * When the back button is pressed, an AlertDialog will be shown asking whether the user wants to close the application
+     */
     override fun onBackPressed() {
         Functions.exitApplicaction(this)
     }
 
+    /**
+     *
+     */
     fun loadPreviousGame(view: View) {
         gameSaved=databaseGame.checkSavedGame()
         if (gameSaved) {

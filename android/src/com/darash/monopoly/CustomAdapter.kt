@@ -16,6 +16,7 @@ import classes.Player
  */
 class CustomAdapter(context: Context, var arrayPlayers: ArrayList<Player>): ArrayAdapter<Player>(context, 0, arrayPlayers) {
 
+
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val arrayPosition=position
         val view=LayoutInflater.from(context).inflate(R.layout.layout_piece_selection, null)
@@ -26,13 +27,13 @@ class CustomAdapter(context: Context, var arrayPlayers: ArrayList<Player>): Arra
         playerName.text=arrayPlayers[position].name
         adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerPieces.adapter=adapterSpinner
-        // spinnerPieces.setSelection(adapterSpinner.getPosition(arrayPlayers[position].selectedPiece))
         spinnerPieces.onItemSelectedListener=(object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(parent: AdapterView<*>?) {
 
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                // The imageView will change depending on the selection of the piece in the spinner
                 when(spinnerPieces.selectedItem as String) {
                     "Barco" -> {
                         imagePiece.setImageResource(context.resources.getIdentifier("barco", "drawable", context.packageName))

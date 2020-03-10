@@ -27,6 +27,9 @@ public class AndroidLauncher extends AndroidApplication {
         initialize(new MyGame(arrayListPlayers, new AndroidDatabase(this)), config);
     }
 
+    /**
+     * When the back button is pressed, it will show an AlertDialog during the game
+     */
     @Override
     public void onBackPressed() {
         Functions.Companion.exitApplicaction(this);

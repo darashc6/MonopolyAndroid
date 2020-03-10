@@ -2,6 +2,7 @@ package classes;
 
 /**
  * Class acting as a square in the board
+ * @author Darash
  */
 public class Square {
     private SquareType type; // Type of Square

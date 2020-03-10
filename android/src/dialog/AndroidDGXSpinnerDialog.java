@@ -52,16 +52,10 @@ public class AndroidDGXSpinnerDialog implements GDXSpinnerDialog {
     }
 
     @Override
-    public GDXSpinnerDialog setPropertyList(ArrayList<Property> list, boolean isMortgaging) {
+    public GDXSpinnerDialog setList(ArrayList<Property> list) {
         ArrayList<String> arrayProperties=new ArrayList<>();
-        if (isMortgaging) {
-            for (int i=0; i<list.size(); i++) {
-                arrayProperties.add(list.get(i).getName()+" - Valor: "+list.get(i).getMortgagePrice()+"€");
-            }
-        } else {
-            for (int i=0; i<list.size(); i++) {
-                arrayProperties.add(list.get(i).getName()+" - Valor: "+list.get(i).getRedeemPrice()+"€");
-            }
+        for (int i=0; i<list.size(); i++) {
+            arrayProperties.add(list.get(i).getName()+" - Valor: "+list.get(i).getMortgagePrice()+"€");
         }
 
         adapterSpinner=new ArrayAdapter<>(activity, android.R.layout.simple_spinner_item, arrayProperties);

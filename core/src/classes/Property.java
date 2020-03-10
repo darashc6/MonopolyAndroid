@@ -2,6 +2,7 @@ package classes;
 
 /**
  * Class that acts as a Property
+ * @author Darash
  */
 public class Property {
     private int boardPosition; // Position on the board

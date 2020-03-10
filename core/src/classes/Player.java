@@ -292,6 +292,7 @@ public class Player extends Actor implements Serializable {
                 }
                 if (this.getBoardPosition()==0) {
                     this.setBoardPosition(39);
+                    this.setMoney(this.getMoney()+200);
                 } else {
                     this.setBoardPosition(this.getBoardPosition()-1);
                 }
@@ -482,6 +483,10 @@ public class Player extends Actor implements Serializable {
         bDialog.build().show();
     }
 
+    /**
+     * Function where the AI player will try to mortgage hi available properties in order to pay the property's rent
+     * @param prop Property the user ties to pay the rent
+     */
     public void autoMortgageProperties(Property prop) {
         boolean declareBankrupt=true;
         for (Property property: this.getPropertiesBought()) {
