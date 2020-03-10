@@ -10,6 +10,7 @@ import com.darash.monopoly.R
 
 /**
  * Class where all the constant functions are stored
+ * @author Darash
  */
 class Functions {
     companion object {

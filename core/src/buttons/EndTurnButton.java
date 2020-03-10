@@ -1,29 +1,17 @@
 package buttons;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 
-public class EndTurnButton extends Actor {
-    private Sprite sprite;
-
+/**
+ * Class acting as the end turn button
+ */
+public class EndTurnButton extends MainButton {
+    /**
+     * Constructor of the end turn button
+     * @param x Starting position x
+     * @param y Starting position y
+     */
     public EndTurnButton(float x, float y) {
-        sprite=new Sprite(new Texture("buttons/end_turn_button.png"));
-        sprite.setBounds(x, y, Gdx.graphics.getWidth()/6, Gdx.graphics.getHeight()/12);
-        this.setPosition(x, y);
-        this.setSize(Gdx.graphics.getWidth()/6,Gdx.graphics.getHeight()/12);
-        this.setOrigin(x,y);
-        sprite.setOrigin(this.getOriginX(),this.getOriginY());
-    }
-
-    @Override
-    public void draw(Batch batch, float parentAlpha) {
-        super.draw(batch, parentAlpha);
-        sprite.setPosition(getX(), getY());
-        sprite.setScale(getScaleX(), getScaleY());
-        sprite.setRotation(getRotation());
-        sprite.draw(batch);
+        super("buttons/end_turn_button.png", x, y, Gdx.graphics.getWidth()/6f, Gdx.graphics.getHeight()/12f);
     }
 }

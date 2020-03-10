@@ -10,11 +10,12 @@ import classes.Player
 
 /**
  * Activity containing the setup for a new game
+ * @author Darash
  */
 class NewGameActivity : AppCompatActivity() {
     private val spinnerNumberPlayers by lazy { findViewById<Spinner>(R.id.spinnerNumberPlayers) } // Spinner containing the number of players
     private val layoutPieceSelection by lazy { findViewById<GridView>(R.id.layout_piece_selection) } // Layout where the user can choose the pieces
-    private lateinit var arrayPlayers: ArrayList<Player>
+    private lateinit var arrayPlayers: ArrayList<Player> // ArrayList of players
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +36,7 @@ class NewGameActivity : AppCompatActivity() {
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                // Depending on the selected item in the spinner, it will either add or remove Player(s) from the ArrayList
                 val nPlayers = Integer.parseInt(spinnerNumberPlayers.selectedItem as String)
                 if (arrayPlayers.size < nPlayers) {
                     while (arrayPlayers.size < nPlayers) {

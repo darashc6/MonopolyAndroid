@@ -13,6 +13,7 @@ import classes.Player
  * Class that creates a custom adapter for gridView
  * @param context Application Context
  * @param nPlayers Number of players choosen by the user via the spinner
+ * @author Darash
  */
 class CustomAdapter(context: Context, var arrayPlayers: ArrayList<Player>): ArrayAdapter<Player>(context, 0, arrayPlayers) {
 

@@ -1,27 +1,17 @@
 package buttons;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 
-public class ThrowDiceButton extends Actor {
-    private Sprite sprite;
-
+/**
+ * Class acting as the throwing dice button
+ */
+public class ThrowDiceButton extends MainButton {
+    /**
+     * Constructor of the dice throw button
+     * @param x Starting position x
+     * @param y Starting position y
+     */
     public ThrowDiceButton(float x, float y) {
-        sprite=new Sprite(new Texture("buttons/dice_button.png"));
-        sprite.setBounds(x, y, Gdx.graphics.getWidth()/6, Gdx.graphics.getHeight()/12);
-        this.setPosition(x, y);
-        this.setSize(Gdx.graphics.getWidth()/6,Gdx.graphics.getHeight()/12);
-    }
-
-    @Override
-    public void draw(Batch batch, float parentAlpha) {
-        super.draw(batch, parentAlpha);
-        sprite.setPosition(getX(), getY());
-        sprite.setScale(getScaleX(), getScaleY());
-        sprite.setRotation(getRotation());
-        sprite.draw(batch);
+        super("buttons/dice_button.png", x, y, Gdx.graphics.getWidth()/6f, Gdx.graphics.getHeight()/12f);
     }
 }

@@ -13,6 +13,7 @@ import services.MyService
 
 /**
  * Activity launcher of the application
+ * @author Darash
  */
 class MainActivity : AppCompatActivity() {
     private val databaseGame by lazy { AndroidDatabase(this) }
@@ -74,7 +75,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     *
+     * Function that loads a previous game if gameSaved return true
      */
     fun loadPreviousGame(view: View) {
         gameSaved=databaseGame.checkSavedGame()

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MonopolyAndroid</string>
+    <string name="app_name">Millionaire</string>
     <string name="buton_new_game">Nueva Partida</string>
     <string name="button_load_game">Cargar Partida</string>
     <string name="number_players_text">Nº Jugadores:</string>

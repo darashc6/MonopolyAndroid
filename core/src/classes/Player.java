@@ -417,7 +417,6 @@ public class Player extends Actor implements Serializable {
                         break;
                     case 5:
                         player.playerMovement(40-player.getBoardPosition(), 1f, false);
-                        player.setMoney(player.getMoney()+200);
                         break;
                     case 6:
                         player.setMoney(player.getMoney()+50);
@@ -428,7 +427,6 @@ public class Player extends Actor implements Serializable {
                     case 8:
                         if (24-player.getBoardPosition()<=0) {
                             player.playerMovement(40-player.getBoardPosition()+24, 1f, false);
-                            player.setMoney(player.getMoney()+200);
                         } else {
                             player.playerMovement(24-player.getBoardPosition(), 0.5f, false);
                         }

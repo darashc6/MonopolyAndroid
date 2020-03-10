@@ -1,29 +1,17 @@
 package buttons;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 
-public class StartGameButton extends Actor {
-    private Sprite sprite;
-
+/**
+ * Class acting as the start game button
+ */
+public class StartGameButton extends MainButton {
+    /**
+     * Constructor of the start button
+     * @param x Starting position x
+     * @param y Starting position y
+     */
     public StartGameButton(float x, float y) {
-        sprite=new Sprite(new Texture("buttons/match_start_button.png"));
-        sprite.setBounds(x, y, Gdx.graphics.getWidth()/6, Gdx.graphics.getHeight()/12);
-        this.setPosition(x, y);
-        this.setSize(Gdx.graphics.getWidth()/6,Gdx.graphics.getHeight()/12);
-        this.setOrigin(x,y);
-        sprite.setOrigin(this.getOriginX(),this.getOriginY());
-    }
-
-    @Override
-    public void draw(Batch batch, float parentAlpha) {
-        super.draw(batch, parentAlpha);
-        sprite.setPosition(getX(), getY());
-        sprite.setScale(getScaleX(), getScaleY());
-        sprite.setRotation(getRotation());
-        sprite.draw(batch);
+        super("buttons/match_start_button.png", x, y, Gdx.graphics.getWidth()/6f, Gdx.graphics.getHeight()/12f);
     }
 }

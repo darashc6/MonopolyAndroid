@@ -25,9 +25,10 @@ public interface GDXSpinnerDialog {
     /**
      * Adds the list to the spinner adapter
      * @param list ArrayList of Property
+     * @param propertiesMortgaged true if list contains properties already mortgaged, false if otherwise
      * @return Same instance the method was called from
      */
-    GDXSpinnerDialog setList(ArrayList<Property> list);
+    GDXSpinnerDialog setList(ArrayList<Property> list, boolean propertiesMortgaged);
 
     /**
      * Sets the text for the positive button

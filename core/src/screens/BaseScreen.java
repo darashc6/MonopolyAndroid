@@ -57,9 +57,9 @@ public abstract class BaseScreen implements Screen {
     private static BuyButton buyButton; // Button for buying a property
     private static AuctionButton auctionButton; // Button for auctioning a property
     private static ThrowDiceButton diceButton; // Button for throwing a dice
-    private MortgageButton mortgageButton; // Button for mortgaging a property
-    private UnmortgageButton unmortgageButton; // Button for unmortgaging a property
-    private SaveButton saveButton; // Button for saving the progress of the game
+    private static MortgageButton mortgageButton; // Button for mortgaging a property
+    private static UnmortgageButton unmortgageButton; // Button for unmortgaging a property
+    private static SaveButton saveButton; // Button for saving the progress of the game
     private static CommunityChestButton chestButton; // Button for the community chest case
     private static ChanceButton chanceButton; // Button for the chance case
     private static EndTurnButton endButton; // Button for ending the turn
@@ -162,14 +162,23 @@ public abstract class BaseScreen implements Screen {
         startButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                startButton.setVisible(false);
                 if (turn == 0) {
                     diceButton.setVisible(true);
                     mortgageButton.setVisible(true);
                     unmortgageButton.setVisible(true);
                     saveButton.setVisible(true);
-                    startButton.setVisible(false);
                 } else {
                     AiFunction();
+                    if (turn==0) {
+                        diceButton.setVisible(true);
+                        mortgageButton.setVisible(true);
+                        unmortgageButton.setVisible(true);
+                        saveButton.setVisible(true);
+                        endButton.setVisible(false);
+                    } else {
+                        endButton.setVisible(true);
+                    }
                 }
             }
         });
@@ -201,7 +210,7 @@ public abstract class BaseScreen implements Screen {
                                 for (int i=0; i<players.size()-1; i++) {
                                     listBets.add(r.nextInt(100)+property.getValue());
                                 }
-                                int maxBet=Collections.max(listBets);
+                                final int maxBet=Collections.max(listBets);
                                 final int nPlayer=listBets.indexOf(maxBet);
 
                                 buttonDialog = dialogs.newDialog(GDXButtonDialog.class);
@@ -212,7 +221,7 @@ public abstract class BaseScreen implements Screen {
                                     public void click(int button) {
                                         board[players.get(nPlayer).getBoardPosition()].getProperty().setOwner(players.get(nPlayer));
                                         players.get(nPlayer).getPropertiesBought().add(board[players.get(nPlayer).getBoardPosition()].getProperty());
-                                        players.get(nPlayer).setMoney(players.get(nPlayer).getMoney()-inputValue);
+                                        players.get(nPlayer).setMoney(players.get(nPlayer).getMoney()-maxBet);
                                         buyButton.setVisible(false);
                                         auctionButton.setVisible(false);
                                         endButton.setVisible(true);
@@ -266,7 +275,7 @@ public abstract class BaseScreen implements Screen {
                     spinnerDialog.setMessage("Elija la propiedad que desea hipotecar");
                     spinnerDialog.setOKButtonText("OK");
                     spinnerDialog.setCancelButtonText("Cancelar");
-                    spinnerDialog.setList(propertiesInUse);
+                    spinnerDialog.setList(propertiesInUse, false);
                     spinnerDialog.setSpinnerDialogListener(new SpinnerDialogListener() {
                         @Override
                         public void confirm() {
@@ -305,28 +314,30 @@ public abstract class BaseScreen implements Screen {
                 if (propertiesMortgaged.isEmpty()) { // If player doesn't have any properties mortgage-able
                     buttonDialog = dialogs.newDialog(GDXButtonDialog.class);
                     showBasicDialog(buttonDialog, "Hipoteca", "No dipsone de ningúna propiedad para deshipotecar");
-                    buttonDialog.setClickListener(new ButtonClickListener() {
-                        @Override
-                        public void click(int button) {
-
-                        }
-                    });
                 } else { // If player has properties mortgage-able
                     final GDXSpinnerDialog spinnerDialog=dialogs.newDialog(GDXSpinnerDialog.class);
                     spinnerDialog.setTitle("Deshipotecar");
                     spinnerDialog.setMessage("Elija la propiedad que desea deshipotecar");
                     spinnerDialog.setOKButtonText("OK");
                     spinnerDialog.setCancelButtonText("Cancelar");
-                    spinnerDialog.setList(propertiesMortgaged);
+                    spinnerDialog.setList(propertiesMortgaged, true);
                     spinnerDialog.setSpinnerDialogListener(new SpinnerDialogListener() {
                         @Override
                         public void confirm() {
                             Property prop=propertiesMortgaged.get(spinnerDialog.getSelectedPosition());
-                            buttonDialog=dialogs.newDialog(GDXButtonDialog.class);
-                            showBasicDialog(buttonDialog, "Propiedad hipotecada",
-                                    "Se ha deshipotecado la propiedad "+prop.getName()+" por un valor de "+prop.getRedeemPrice()+"€");
-                            players.get(0).getPropertiesBought().get(players.get(0).getPropertiesBought().indexOf(prop)).setMortgaged(false);
-                            players.get(0).setMoney(players.get(0).getMoney()-prop.getRedeemPrice());
+                            if (players.get(0).getMoney()>=prop.getRedeemPrice()) {
+                                buttonDialog=dialogs.newDialog(GDXButtonDialog.class);
+                                showBasicDialog(buttonDialog, "Propiedad deshipotecada",
+                                        "Se ha deshipotecado la propiedad "+prop.getName()+" por un valor de "+prop.getRedeemPrice()+"€");
+                                players.get(0).getPropertiesBought().get(players.get(0).getPropertiesBought().indexOf(prop)).setMortgaged(false);
+                                players.get(0).setMoney(players.get(0).getMoney()-prop.getRedeemPrice());
+                            } else {
+                                buttonDialog=dialogs.newDialog(GDXButtonDialog.class);
+                                showBasicDialog(buttonDialog, "Error deshipoteca",
+                                        "No dispone del dinero necesario para deshipotecar la propiedad. \n" +
+                                                "Valor para deshipotecar "+prop.getName()+": "+prop.getRedeemPrice()+"€+\n" +
+                                                "Su dinero: "+players.get(0).getMoney()+"€");
+                            }
                         }
 
                         @Override
@@ -741,8 +752,14 @@ public abstract class BaseScreen implements Screen {
         if (turn==players.size()) {
             turn=0;
             diceButton.setVisible(true);
+            mortgageButton.setVisible(true);
+            unmortgageButton.setVisible(true);
+            saveButton.setVisible(true);
         } else {
             endButton.setVisible(true);
+            mortgageButton.setVisible(false);
+            unmortgageButton.setVisible(false);
+            saveButton.setVisible(true);
         }
     }
 

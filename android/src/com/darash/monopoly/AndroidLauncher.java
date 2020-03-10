@@ -13,6 +13,7 @@ import database.AndroidDatabase;
 
 /**
  * Class that launches the game
+ * @author Darash
  */
 public class AndroidLauncher extends AndroidApplication {
     @Override

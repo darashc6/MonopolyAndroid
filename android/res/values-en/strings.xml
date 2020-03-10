@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Millionaire</string>
+    <string name="buton_new_game">New Game</string>
+    <string name="button_load_game">Load Game</string>
+    <string name="number_players_text">Nº Players:</string>
+    <string name="play_buton">¡Play!</string>
+    <string-array name="number_players">
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+    <string-array name="pieces">
+        <item>Boat</item>
+        <item>Horse</item>
+        <item>Wheelbarrow</item>
+        <item>Car</item>
+        <item>Thimble</item>
+        <item>Hat</item>
+        <item>Warrior</item>
+        <item>Shoe</item>
+    </string-array>
+    <string name="exit_application_title">Exit app?</string>
+    <string name="exit_application_message">Are you sure you want to leave my extraordinary app that\'s definitely not a copy-paste from last year\'s game?</string>
+    <string name="exit_application_negative">No</string>
+    <string name="exit_application_positive">Yes</string>
+    <string name="exit_application_negative_toast">You\'re an amazing person :). I wish you the best in the future.</string>
+    <string name="exit_application_positive_toast">:(</string>
+
+    <string name="overwrite_game_title">Start from the beginning?</string>
+    <string name="overwrite_game_message">Are you sure you want to start from scratch? You already have a game in progress</string>
+    <string name="overwrite_game_negative">Cancel</string>
+    <string name="overwrite_game_positive">Continue</string>
+    <string name="match_deleted_message">Game deleted</string>
+
+    <string name="no_saved_match_message">You don\'t have a saved game</string>
+</resources>

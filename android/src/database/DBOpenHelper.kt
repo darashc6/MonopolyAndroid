@@ -4,7 +4,17 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
+/**
+ * Class used to create all the necessary tables for the game's database
+ * @param context Application's context
+ * @param version Databse version
+ * @author Darash
+ */
 class DBOpenHelper(var context: Context, var version: Int): SQLiteOpenHelper(context, "bdMonopoly", null, version) {
+
+    /**
+     * Creates all the necessary tables for the game
+     */
     override fun onCreate(db: SQLiteDatabase?) {
         db!!.execSQL("CREATE TABLE playersMonopoly(name TEXT PRIMARY KEY, " +
                 "position INT(2), " +
